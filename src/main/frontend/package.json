@@ -1,0 +1,62 @@
+{
+  "name": "urmw-stats",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@primer/octicons-react": "^11.0.0",
+    "@types/d3-scale-chromatic": "^1.5.0",
+    "@types/js-cookie": "^2.2.6",
+    "@types/node": "^14.11.1",
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.5",
+    "@types/react-select": "^3.0.20",
+    "bootstrap": "^4.5.2",
+    "chart.js": "^2.9.3",
+    "chartjs-plugin-error-bars": "^1.2.2",
+    "d3-scale-chromatic": "^2.0.0",
+    "fuse.js": "^6.4.1",
+    "jquery": "^3.5.1",
+    "js-cookie": "^2.2.1",
+    "node-sass": "^4.14.1",
+    "popper.js": "^1.16.1",
+    "react": "^16.13.1",
+    "react-bootstrap": "^1.3.0",
+    "react-chartjs-2": "^2.10.0",
+    "react-dom": "^16.13.1",
+    "react-intersection-observer": "^8.28.5",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^3.4.3",
+    "react-search-autocomplete": "^1.0.6",
+    "react-select": "^3.1.0",
+    "ts-trueskill": "^3.0.4",
+    "typeface-righteous": "0.0.72",
+    "typeface-roboto": "0.0.75",
+    "typeface-roboto-mono": "0.0.75",
+    "typescript": "^3.9.7"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "install": "npm rebuild node-sass && npm run build && node install.js"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "fs-extra": "^9.0.1",
+    "react-app-rewired": "^2.1.6"
+  }
+}

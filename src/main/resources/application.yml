@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active:
+      - oauth2
+      - ingestion
+  jpa:
+    open-in-view: false
+
+server:
+  error:
+    include-message: always

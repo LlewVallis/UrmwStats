@@ -1,0 +1,74 @@
+$primary: #663399;
+$secondary: #ff4c81;
+$tertiary: #fc9434;
+$light: #666;
+
+@import "~bootstrap/scss/bootstrap";
+@import "typeface-righteous";
+@import "typeface-roboto";
+@import "typeface-roboto-mono";
+
+.btn {
+  &:not(.disabled):hover {
+    text-decoration: underline;
+  }
+
+  font-family: Roboto, sans-serif;
+  color: #888 !important;
+  background-color: inherit !important;
+  height: 3rem;
+}
+
+.btn-outline-light {
+  font-size: 1rem !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.background-primary {
+  background-color: $primary;
+}
+
+.background-secondary {
+  background-color: $secondary;
+}
+
+.background-tertiary {
+  background-color: $tertiary;
+}
+
+.display-on-over:hover {
+  opacity: 1 !important;
+}
+
+.grow-on-hover:hover {
+  transform: scale(1.075);
+}
+
+.navbar {
+  padding-left: 10vw;
+  padding-right: 10vw;
+}
+
+.body-container {
+  margin-right: calc(100% - 100vw);
+}
+
+body {
+  font-family: Roboto, sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+main {
+  padding: 5rem 10vw 5rem 10vw;
+}
+
+h1 {
+  margin-bottom: 2rem;
+}
+
+p {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 1.1rem;
+  text-align: left;
+}
