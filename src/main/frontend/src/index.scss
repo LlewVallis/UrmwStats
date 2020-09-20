@@ -36,8 +36,13 @@ $light: #666;
   background-color: $tertiary;
 }
 
-.display-on-over:hover {
-  opacity: 1 !important;
+.display-on-hover {
+  transition: opacity .1s;
+  opacity: 0;
+}
+
+.display-on-hover:hover {
+  opacity: 1;
 }
 
 .grow-on-hover:hover {

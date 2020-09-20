@@ -98,7 +98,6 @@ const PlayerCard = ({ player }: { player: Player }) => {
       <div 
         className="display-on-hover"
         style={{
-          opacity: "0%",
           position: "absolute",
           left: "0",
           top: "0",
