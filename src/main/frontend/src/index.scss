@@ -53,9 +53,11 @@ $light: #666;
   margin-right: calc(100% - 100vw);
 }
 
-body {
+* {
   font-family: Roboto, sans-serif;
-  box-sizing: border-box;
+}
+
+body {
   overflow-x: hidden;
 }
 
