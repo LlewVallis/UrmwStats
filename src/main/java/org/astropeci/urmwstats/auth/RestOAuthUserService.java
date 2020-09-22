@@ -1,6 +1,7 @@
-package org.astropeci.urmwstats.security;
+package org.astropeci.urmwstats.auth;
 
 import lombok.extern.slf4j.Slf4j;
+import org.astropeci.urmwstats.SecurityConfiguration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

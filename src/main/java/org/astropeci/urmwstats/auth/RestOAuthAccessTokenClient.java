@@ -1,10 +1,10 @@
-package org.astropeci.urmwstats.security;
+package org.astropeci.urmwstats.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.astropeci.urmwstats.SecurityConfiguration;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;

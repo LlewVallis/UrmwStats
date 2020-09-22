@@ -1,6 +1,8 @@
-package org.astropeci.urmwstats.security;
+package org.astropeci.urmwstats;
 
 import lombok.RequiredArgsConstructor;
+import org.astropeci.urmwstats.auth.RestOAuthAccessTokenClient;
+import org.astropeci.urmwstats.auth.RestOAuthUserService;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -55,6 +57,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .defaultSuccessUrl("/", true)
                     .clientRegistrationRepository(clients)
             );
+        }
+
+        if (Set.of(springEnv.getActiveProfiles()).contains("ssl")) {
+            http
+                    .requiresChannel()
+                    .anyRequest()
+                    .requiresSecure();
         }
     }
 }

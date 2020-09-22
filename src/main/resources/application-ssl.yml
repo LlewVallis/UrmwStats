@@ -1,0 +1,8 @@
+server:
+  ssl:
+    key-store: file:keystore.p12
+    key-store-password: ${KEY_STORE_PASSWORD}
+    key-store-type: pkcs12
+    key-alias: tomcat
+    key-password: ${KEY_STORE_PASSWORD}
+  port: 8443

@@ -1,4 +1,4 @@
-package org.astropeci.urmwstats.security;
+package org.astropeci.urmwstats.auth;
 
 import lombok.Value;
 import org.springframework.security.access.annotation.Secured;
