@@ -59,6 +59,10 @@ const About = () => (
             The ID of a match indicates how many prior matches have occured, so the match with ID <Mono>2</Mono> would be the third match in the season.
             If <Mono>&lt;count&gt;</Mono> is greater than the number of matches in the season, only the available number matches will be returned.
           </Route>
+
+          <Route title="/doggos/random" lastUpdated={lastUpdated} noSample>
+            Provides a random doggo image.
+          </Route>
         </>
       );
     }}
@@ -91,15 +95,21 @@ interface RouteProps {
   title: string;
   endpoint?: string;
   children: ReactNode;
+  noSample?: boolean;
 }
 
-const Route = ({ lastUpdated, title, children, endpoint }: RouteProps) => {
+const Route = ({ lastUpdated, title, children, endpoint, noSample }: RouteProps) => {
   const [sample, setSample] = useState<any>("Fetching sample...");
 
   useEffect(() => {
     const interval = setInterval(() => fetch(), 15000);
 
     function fetch() {
+      if (noSample) {
+        clearInterval(interval);
+        return;
+      }
+
       requestJson(endpoint || `/api${title}`).then(value => {
         setSample(value);
         clearInterval(interval);
@@ -110,7 +120,7 @@ const Route = ({ lastUpdated, title, children, endpoint }: RouteProps) => {
 
     fetch();
     return () => clearInterval(interval);
-  }, [title, endpoint, lastUpdated]);
+  }, [title, endpoint, lastUpdated, noSample]);
 
   return (
     <>
@@ -132,6 +142,7 @@ const Route = ({ lastUpdated, title, children, endpoint }: RouteProps) => {
           border: "1px solid rgba(0, 0, 0, 0.125)",
           padding: "1rem",
           borderRadius: "0.5rem",
+          display: noSample ? "none" : undefined,
         }}
       >
         <JSONTree data={sample} theme={JsonTreeTheme} keyPath={["sample response"]} shouldExpandNode={() => false} />

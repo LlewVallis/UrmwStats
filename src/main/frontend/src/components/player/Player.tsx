@@ -21,7 +21,7 @@ const Player = () => {
           if (player) {
             return (
               <>
-                <h1>Stats for {name}</h1>
+                <Title name={name} />
                 <Breaker />
 
                 <MatchHistoryProvider player={name}>
@@ -65,6 +65,26 @@ const Player = () => {
         }}
       </StandardDataContext.Consumer>
     </div>
+  );
+};
+
+const Title = ({ name }: { name: string }) => {
+  return (
+    <>
+      <h1
+        style={{
+          display: "inline-block",
+          cursor: name === "UnWin" ? "pointer" : undefined,
+        }}
+        onClick={() => {
+          if (name === "UnWin") {
+            window.open("/api/doggos/random");
+          }
+        }}
+      >
+        Stats for {name}
+      </h1>
+    </>
   );
 };
 

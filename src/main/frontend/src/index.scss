@@ -13,7 +13,7 @@ $light: #666;
     text-decoration: underline;
   }
 
-  font-family: Roboto, sans-serif;
+  font-family: 'Roboto', sans-serif;
   color: #888 !important;
   background-color: inherit !important;
   height: 3rem;
@@ -64,7 +64,7 @@ $light: #666;
 }
 
 body * {
-  font-family: Roboto, sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 body {
@@ -83,4 +83,8 @@ p {
   font-family: Georgia, 'Times New Roman', Times, serif;
   font-size: 1.1rem;
   text-align: left;
+}
+
+code {
+  font-family: 'Roboto Mono', monospace;
 }
