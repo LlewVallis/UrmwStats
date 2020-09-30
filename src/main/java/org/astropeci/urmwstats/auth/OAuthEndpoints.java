@@ -1,5 +1,6 @@
 package org.astropeci.urmwstats.auth;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +17,10 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api")
 @Secured("ROLE_USER")
+@RequiredArgsConstructor
 public class OAuthEndpoints {
+
+    private final RoleManager roleManager;
 
     @Value
     private static class DiscordUserResponse {
@@ -24,6 +28,7 @@ public class OAuthEndpoints {
         String name;
         String discriminator;
         String avatarUri;
+        boolean staff;
     }
 
     @GetMapping("/discord-user")
@@ -31,10 +36,25 @@ public class OAuthEndpoints {
         String id = Objects.requireNonNull(principal.getAttribute("id"));
         String name = Objects.requireNonNull(principal.getAttribute("username"));
         String discriminator = Objects.requireNonNull(principal.getAttribute("discriminator"));
-        String avatarHash = Objects.requireNonNull(principal.getAttribute("avatar"));
 
-        String avatarUri = String.format("https://cdn.discordapp.com/avatars/%s/%s.png", id, avatarHash);
+        String avatarHash = principal.getAttribute("avatar");
 
-        return new DiscordUserResponse(id, name, discriminator, avatarUri);
+        String avatarUri;
+        if (avatarHash == null) {
+            int modDiscriminator = Integer.parseInt(discriminator) % 5;
+            avatarUri = String.format("https://cdn.discordapp.com/embed/avatars/%s.png", modDiscriminator);
+        } else {
+            avatarUri = String.format("https://cdn.discordapp.com/avatars/%s/%s.png", id, avatarHash);
+        }
+
+        boolean staff;
+        try {
+            roleManager.authenticate(principal);
+            staff = true;
+        } catch (NotStaffException ignored) {
+            staff = false;
+        }
+
+        return new DiscordUserResponse(id, name, discriminator, avatarUri, staff);
     }
 }

@@ -3,12 +3,13 @@ import { Spinner } from "react-bootstrap";
 import { XIcon } from "@primer/octicons-react";
 
 export interface PageSpinnerProps {
-  errored: boolean,
+  errored: boolean;
+  message?: string;
 }
 
-const PageSpinner = ({ errored }: PageSpinnerProps) => {
+const PageSpinner = ({ errored, message }: PageSpinnerProps) => {
   const mainComponent = errored ? <XIcon /> : <Spinner animation="border" />;
-  const tooltip = errored ? "Failed to connect, check your connection" : "Loading...";
+  const tooltip = errored ? "Failed to connect, check your connection" : (message || "Loading...");
 
   const scale = errored ? 3.5 : 2;
 

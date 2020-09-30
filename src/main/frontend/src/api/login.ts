@@ -1,5 +1,3 @@
-import Cookies from "js-cookie";
-
 import { request, requestJson } from "./api";
 
 export interface LoginDetails {
@@ -7,6 +5,7 @@ export interface LoginDetails {
   name: string,
   discriminator: string,
   avatarUri: string,
+  staff: boolean,
 }
 
 const loginDetails: Promise<LoginDetails> = requestJson("/api/discord-user");
@@ -16,9 +15,6 @@ export default loginDetails;
 export function logout() {
   request("/logout", {
      method: "POST",
-     headers: new Headers({
-        "X-XSRF-TOKEN": Cookies.get("XSRF-TOKEN") || "",
-     }),
   }).then(() => {
     window.location.href = "/";
   }).catch(() => {

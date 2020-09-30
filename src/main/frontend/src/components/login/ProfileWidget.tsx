@@ -1,24 +1,24 @@
 import React from "react";
 import { LoginDetails, logout } from "../../api/login";
 import { Dropdown } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 
-export interface ProfileWidgetProps {
-  loginDetails: LoginDetails;
-}
-
-const ProfileWidget = ({ loginDetails }: ProfileWidgetProps) => (
+const ProfileWidget = ({ loginDetails }: { loginDetails: LoginDetails }) => (
   <Dropdown drop="left">
     <Dropdown.Toggle as={UnstyledToggle} id="dropdown-custom-components">
       <ProfilePicture loginDetails={loginDetails} />
     </Dropdown.Toggle>
 
     <Dropdown.Menu>
+      {loginDetails.staff ? (
+        <StaffButton />
+      ) : null}
       <LogoutButton />
     </Dropdown.Menu>
   </Dropdown>
 );
 
-const ProfilePicture = ({ loginDetails }: ProfileWidgetProps) => (
+const ProfilePicture = ({ loginDetails }: { loginDetails: LoginDetails }) => (
       <img 
         src={loginDetails.avatarUri + "?size=128"}
         alt=""
@@ -32,6 +32,18 @@ const ProfilePicture = ({ loginDetails }: ProfileWidgetProps) => (
         }}
       />
 );
+
+const StaffButton = () => {
+  const history = useHistory();
+
+  return (
+    <Dropdown.Item onClick={() => {
+      history.push("/staff");
+    }}>
+      Staff
+    </Dropdown.Item>
+  );
+};
 
 const LogoutButton = () => (
   <Dropdown.Item onClick={logout}>

@@ -9,17 +9,17 @@ $light: #666;
 @import "typeface-roboto-mono";
 
 .btn {
+  font-family: 'Roboto', sans-serif;
+}
+
+.btn-outline-light {
   &:not(.disabled):hover {
     text-decoration: underline;
   }
 
-  font-family: 'Roboto', sans-serif;
+  height: 3rem;
   color: #888 !important;
   background-color: inherit !important;
-  height: 3rem;
-}
-
-.btn-outline-light {
   font-size: 1rem !important;
   border-color: rgba(0, 0, 0, 0.1) !important;
 }
@@ -52,6 +52,10 @@ $light: #666;
 .json-sample * {
   background-color: #fff !important;
   font-family: Roboto Mono, monospace !important;
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
 }
 
 .navbar {

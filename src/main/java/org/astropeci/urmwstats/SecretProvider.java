@@ -23,6 +23,10 @@ public class SecretProvider {
         return getEnv("DISCORD_BOT_TOKEN");
     }
 
+    public String getMongoUri() {
+        return getEnv("MONGO_URI");
+    }
+
     private String getEnv(String variableName) {
         String value = env.get(variableName);
 

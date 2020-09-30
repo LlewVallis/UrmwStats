@@ -14,6 +14,7 @@ import Player from "./player/Player";
 import History from "./history/History";
 import Players from "./players/Players";
 import Calculator from "./calculator/Calculator";
+import Staff from "./staff/Staff";
 
 export const PrimaryColor = "#663399";
 export const SecondaryColor = "#ff4c81";
@@ -103,6 +104,9 @@ export default class App extends Component<{}, AppState> {
             </Route>
             <Route path="/player/:name">
               <Player />
+            </Route>
+            <Route path="/staff">
+              <Staff />
             </Route>
             <Route path="/">
               <Home />

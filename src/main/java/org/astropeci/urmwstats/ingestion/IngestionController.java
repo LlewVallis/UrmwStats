@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.astropeci.urmwstats.JdaProvider;
 import org.astropeci.urmwstats.SecretProvider;
 import org.astropeci.urmwstats.data.*;
 import org.springframework.context.annotation.Profile;
@@ -44,25 +45,19 @@ public class IngestionController extends ListenerAdapter implements AutoCloseabl
     private final AtomicBoolean updateRequested = new AtomicBoolean(true);
     private final Thread thread = new Thread(this::pollForUpdates, "Discord Ingestion Thread");
 
-    @SneakyThrows({ InterruptedException.class })
     public IngestionController(
             RepositoryCoordinator repositoryCoordinator,
             LeaderboardParser leaderboardParser,
             HistoryParser historyParser,
-            SecretProvider secretProvider
-    ) throws LoginException {
+            JDA jda
+    ) {
         this.repositoryCoordinator = repositoryCoordinator;
         this.leaderboardParser = leaderboardParser;
         this.historyParser = historyParser;
-
-        log.info("Connecting to the Discord API");
-        jda = JDABuilder.createLight(secretProvider.getDiscordBotToken(), GatewayIntent.GUILD_MESSAGES)
-                .build();
-
-        jda.addEventListener(this);
-        jda.awaitReady();
+        this.jda = jda;
 
         log.info("Launching ingestion engine");
+        jda.addEventListener(this);
         thread.start();
     }
 
