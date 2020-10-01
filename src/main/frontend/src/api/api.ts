@@ -17,5 +17,5 @@ export function request(input: RequestInfo, init?: RequestInit): Promise<Respons
     } else {
       throw new Error(`did not expect status ${resp.status} from request to ${input}`);
     }
-  })
+  });
 }

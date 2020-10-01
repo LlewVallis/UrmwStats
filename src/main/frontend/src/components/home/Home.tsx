@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import Leaderboard from "./Leaderboard"
 import Podium, { TourneyDate } from "./Podium"
 import TourneyWinRates from "./TourneyWinRates";
+import VideoCarousel from "./VideoCarousel";
 
 const Home = () => (
   <div style={{
@@ -36,6 +37,15 @@ const Home = () => (
         <Note>Winning in a team awards fractional points</Note>
       </FlexElement>
     </FlexContainer>
+
+    <h1 style={{
+      marginTop: "5rem",
+    }}>
+      Recent videos
+    </h1>
+
+    <VideoCarousel />
+    Check out our YouTube channel <a href="https://www.youtube.com/channel/UC_3WbejKtKl_s2iRqyTNfMQ">here</a>.
   </div>
 );
 
