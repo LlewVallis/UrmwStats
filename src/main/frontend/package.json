@@ -32,6 +32,7 @@
     "react-scripts": "^3.4.3",
     "react-search-autocomplete": "^1.0.6",
     "react-select": "^3.1.0",
+    "react-toastify": "^6.0.8",
     "ts-trueskill": "^3.0.4",
     "typeface-righteous": "0.0.72",
     "typeface-roboto": "0.0.75",

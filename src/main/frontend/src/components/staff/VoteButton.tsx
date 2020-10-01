@@ -5,6 +5,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautif
 import * as poll from "../../api/poll";
 import { LoginDetails } from "../../api/login";
 import { chosenPreferences } from "./Poll";
+import { toast } from "react-toastify";
 
 const VoteButton = ({ data, loginDetails, onVote }: { data: Poll, loginDetails: LoginDetails, onVote: () => void }) => {
   const [preferences, setPreferences] = useState(chosenPreferences(data, loginDetails));
@@ -82,6 +83,7 @@ const VoteButton = ({ data, loginDetails, onVote }: { data: Poll, loginDetails: 
                 close();
               }).catch(error => {
                 console.error("Failed to cast vote", error);
+                toast.error("Could not cast vote");
               });
             }}>
               Cast vote

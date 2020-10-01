@@ -4,6 +4,7 @@ import { StandardDataContext, } from "./App";
 import { StandardData } from "../api/standard-data";
 import { Match } from "../api/match";
 import * as match from "../api/match";
+import { toast } from "react-toastify";
 
 export interface HistoryProviderProps {
   count?: number;
@@ -35,7 +36,7 @@ const MatchHistoryWithData = ({ count, player, children, data }: HistoryProvider
         setHistory(history)
         clearInterval(interval);
       }).catch(error => {
-          console.error("Failed to fetch history", error);
+        console.error("Failed to fetch history", error);
       });
     }
 

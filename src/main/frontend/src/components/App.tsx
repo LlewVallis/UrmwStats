@@ -1,5 +1,6 @@
 import React, { Component, ReactNode, Context } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 import Header from "./Header";
 import Footer from "./Footer";
@@ -15,6 +16,8 @@ import History from "./history/History";
 import Players from "./players/Players";
 import Calculator from "./calculator/Calculator";
 import Staff from "./staff/Staff";
+
+import "react-toastify/dist/ReactToastify.css";
 
 export const PrimaryColor = "#663399";
 export const SecondaryColor = "#ff4c81";
@@ -54,6 +57,10 @@ export default class App extends Component<{}, AppState> {
           this.reloadData();
         }
       }).catch(error => {
+        if (!this.state.errored) {
+          toast.error("Lost connection to URMW Stats");
+        }
+
         console.error("Failed to fetch info", error);
         this.setState({ errored: true })
       });
@@ -64,6 +71,10 @@ export default class App extends Component<{}, AppState> {
 
   reloadData() {
     standardData.fetch().then(data => {
+      if (this.state.data && this.state.errored) {
+        toast.success("Restored connection to URMW Stats");
+      }
+
       this.setState({ data, errored: false });
     }).catch(error => {
       console.error("Failed to fetch standard data", error);
@@ -74,6 +85,7 @@ export default class App extends Component<{}, AppState> {
   render(): ReactNode {
     return (
       <BrowserRouter>
+        <ToastContainer />
         <Header state={this.state} />
 
         <main style={{

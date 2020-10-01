@@ -5,6 +5,7 @@ import { Poll as PollData, Voter as VoterData } from "../../api/poll";
 import * as poll from "../../api/poll";
 import VoteButton from "./VoteButton";
 import { LoginDetails } from "../../api/login";
+import { toast } from "react-toastify";
 
 const Poll = ({ data, loginDetails, refreshNow }: { data: PollData, loginDetails: LoginDetails, refreshNow: () => void }) => {
   const hasVoted = data.voters.find(voter => voter.id === loginDetails.id) !== undefined;
@@ -71,6 +72,7 @@ const Poll = ({ data, loginDetails, refreshNow }: { data: PollData, loginDetails
             }}>
               <ConfirmingButton
                 title="Withdraw vote"
+                errorMessage="Could not withdraw vote"
                 variant="primary"
                 perform={() => poll.withdraw(data.name)}
                 onComplete={refreshNow}
@@ -86,6 +88,7 @@ const Poll = ({ data, loginDetails, refreshNow }: { data: PollData, loginDetails
 
           <ConfirmingButton
             title="Close poll"
+            errorMessage="Could not close poll"
             variant="light"
             perform={() => poll.close(data.name)}
             onComplete={refreshNow}
@@ -135,13 +138,14 @@ const Breaker = () => (
 
 interface ConfirmingButtonProps {
   title: string;
+  errorMessage: string;
   children: ReactNode;
   variant: string;
   perform: () => Promise<any>;
   onComplete: () => void;
 };
 
-const ConfirmingButton = ({ title, children, variant, perform, onComplete }: ConfirmingButtonProps) => {
+const ConfirmingButton = ({ title, errorMessage, children, variant, perform, onComplete }: ConfirmingButtonProps) => {
   const [showModal, setShowModal] = useState(false);
   const close = () => setShowModal(false);
 
@@ -164,6 +168,7 @@ const ConfirmingButton = ({ title, children, variant, perform, onComplete }: Con
                 close();
               }).catch(error => {
                 console.error("Failed to perform action for '" + title + "'", error)
+                toast.error(errorMessage);
               });
             }}>
               Yes

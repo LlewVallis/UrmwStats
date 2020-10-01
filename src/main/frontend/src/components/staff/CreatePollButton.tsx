@@ -1,6 +1,7 @@
 import { ArrowRightIcon, XIcon } from "@primer/octicons-react";
 import React, { useRef, useState } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
+import { toast } from "react-toastify";
 import * as poll from "../../api/poll";
 
 const CreatePollButton = ({ onCreate }: { onCreate: () => void }) => {
@@ -87,6 +88,7 @@ const CreatePollButton = ({ onCreate }: { onCreate: () => void }) => {
                 close();
               }).catch(error => {
                 console.error("Failed to create poll", error);
+                toast.error("Could not create poll");
               });
             }}
           >
