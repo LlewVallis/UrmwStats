@@ -63,9 +63,9 @@ const PollView = ({ polls, loginDetails, refreshNow }: { polls: PollData[], logi
 
   return (
     <div style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(2, 1fr)",
-      gap: "1rem",
+      display: "flex",
+      flexWrap: "wrap",
+      margin: "0 -0.5rem",
     }}>
       {polls.map(poll => <Poll key={poll.name} data={poll} loginDetails={loginDetails} refreshNow={refreshNow} />)}
     </div>

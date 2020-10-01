@@ -16,6 +16,10 @@ const Poll = ({ data, loginDetails, refreshNow }: { data: PollData, loginDetails
       border: "1px solid rgba(0, 0, 0, 0.125)",
       padding: "1.25rem",
       borderRadius: "0.5rem",
+      flexGrow: 1,
+      margin: "0 0.5rem",
+      marginBottom: "0.5rem",
+      minWidth: "17.5rem",
     }}>
       <div>
         <b>{data.name}</b>

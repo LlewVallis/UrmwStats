@@ -26,10 +26,15 @@ const Header = ({ state }: { state: AppState }) => {
         </Link>
       </Navbar.Brand>
 
-      <Page location="/about">About</Page>
-      <Page location="/players">Players</Page>
-      <Page location="/history">History</Page>
-      <Page location="/calculator">Calculator</Page>
+      <div style={{
+        flexShrink: 1,
+        overflow: "scroll",
+      }}>
+        <Page location="/about">About</Page>
+        <Page location="/players">Players</Page>
+        <Page location="/history">History</Page>
+        <Page location="/calculator">Calculator</Page>
+      </div>
 
       <div className="ml-auto">
         <LoginWidget />
