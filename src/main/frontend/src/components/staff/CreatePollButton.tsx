@@ -1,6 +1,6 @@
 import { ArrowRightIcon, XIcon } from "@primer/octicons-react";
 import React, { useRef, useState } from "react";
-import { Modal, Form, Button } from "react-bootstrap";
+import { Modal, Form, Button, InputGroup } from "react-bootstrap";
 import { toast } from "react-toastify";
 import * as poll from "../../api/poll";
 
@@ -70,7 +70,12 @@ const CreatePollButton = ({ onCreate }: { onCreate: () => void }) => {
                 }
               }}
             >
-              <Form.Control ref={optionInput} type="text" placeholder="Add option" />
+              <InputGroup>
+                <Form.Control ref={optionInput} type="text" placeholder="Add option" />
+                <InputGroup.Append>
+                  <Button type="submit">+</Button>
+                </InputGroup.Append>
+              </InputGroup>
             </form>
           </Form.Group>
 
