@@ -28,7 +28,7 @@ const Header = ({ state }: { state: AppState }) => {
 
       <div style={{
         flexShrink: 1,
-        overflow: "scroll",
+        overflow: "hidden",
       }}>
         <Page location="/about">About</Page>
         <Page location="/players">Players</Page>
