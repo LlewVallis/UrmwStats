@@ -27,6 +27,10 @@ public class SecretProvider {
         return getEnv("MONGO_URI");
     }
 
+    public String getAnnouncementChannelId() {
+        return getEnv("ANNOUNCEMENT_CHANNEL_ID");
+    }
+
     private String getEnv(String variableName) {
         String value = env.get(variableName);
 

@@ -3,6 +3,7 @@ package org.astropeci.urmwstats.api.staff;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.astropeci.urmwstats.Announcer;
 import org.astropeci.urmwstats.auth.RoleManager;
 import org.astropeci.urmwstats.data.Poll;
 import org.astropeci.urmwstats.data.PollRepository;
@@ -28,6 +29,8 @@ public class PollEndpoints {
     private final RoleManager roleManager;
     private final PollRepository pollRepository;
 
+    private final Announcer announcer;
+
     @GetMapping("/polls")
     public List<Poll> polls(@AuthenticationPrincipal OAuth2User principal) {
         roleManager.authenticate(principal);
@@ -50,6 +53,10 @@ public class PollEndpoints {
 
         try {
             Poll poll = pollRepository.create(name, data.options);
+
+            String username = Objects.requireNonNull(principal.getAttribute("username"));
+            announcer.announce(username + " created the poll `" + name + "`");
+
             return new ResponseEntity<>(poll, HttpStatus.CREATED);
         } catch (PollRepository.AlreadyExistsException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
@@ -67,7 +74,13 @@ public class PollEndpoints {
         log.info("{} is closing poll {}", principal, name);
 
         try {
-            return pollRepository.close(name);
+            Poll poll = pollRepository.close(name);
+
+            String username = Objects.requireNonNull(principal.getAttribute("username"));
+            String winningOptions = String.join(", ", poll.getWinningOptions());
+            announcer.announce(username + " closed `" + name + "` the winning option(s) were `" + winningOptions + "`");
+
+            return poll;
         } catch (PollRepository.PollNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -98,7 +111,11 @@ public class PollEndpoints {
         String voterName = Objects.requireNonNull(principal.getAttribute("username"));
 
         try {
-            return pollRepository.vote(pollName, voterId, voterName, voteData.preferences);
+            Poll poll = pollRepository.vote(pollName, voterId, voterName, voteData.preferences);
+
+            announcer.announce(voterName + " voted on `" + pollName + "`");
+
+            return poll;
         } catch (PollRepository.PollNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         } catch (PollRepository.MalformedVoteException e) {
@@ -115,9 +132,14 @@ public class PollEndpoints {
         log.info("{} is withdrawing their vote on poll {}", principal, pollName);
 
         String voterId = Objects.requireNonNull(principal.getAttribute("id"));
+        String voterName = Objects.requireNonNull(principal.getAttribute("username"));
 
         try {
-            return pollRepository.withdraw(pollName, voterId);
+            Poll poll = pollRepository.withdraw(pollName, voterId);
+
+            announcer.announce(voterName + " withdrew their vote on `" + pollName + "`");
+
+            return poll;
         } catch (PollRepository.PollNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
