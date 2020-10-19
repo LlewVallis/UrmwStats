@@ -76,7 +76,7 @@ public class MatchParser {
                 player.setStreak(Math.max(player.getStreak(), 0) + 1);
 
                 for (MatchParticipant opponent : losers) {
-                    player.getWinsAgainst().merge(opponent.getName(), 1, (name, wins) -> wins + 1);
+                    player.getWinsAgainst().merge(opponent.getName(), 1, Integer::sum);
                 }
             }
 
@@ -85,7 +85,7 @@ public class MatchParser {
                 player.setStreak(Math.min(player.getStreak(), 0) - 1);
 
                 for (MatchParticipant opponent : winners) {
-                    player.getLossesAgainst().merge(opponent.getName(), 1, (name, losses) -> losses + 1);
+                    player.getLossesAgainst().merge(opponent.getName(), 1, Integer::sum);
                 }
             }
 
