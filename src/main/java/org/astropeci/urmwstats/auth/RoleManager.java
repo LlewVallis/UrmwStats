@@ -46,6 +46,10 @@ public class RoleManager {
 
     public AuthProof authenticate(OAuth2User principal) {
         String id = Objects.requireNonNull(principal.getAttribute("id"));
+        return authenticate(id);
+    }
+
+    public AuthProof authenticate(String id) {
         Result result = cache.get(id);
 
         if (result.proof == null) {

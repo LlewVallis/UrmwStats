@@ -1,9 +1,8 @@
 package org.astropeci.urmwstats.api;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.astropeci.urmwstats.DoggoUriProvider;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,23 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class DoggoEndpoints {
 
-    private List<String> uris = null;
+    private final DoggoUriProvider doggoUriProvider;
 
     @GetMapping("/doggos/random")
     public ResponseEntity<Resource> randomDoggo() {
-        URI uri = randomUri();
+        URI uri = doggoUriProvider.randomUri();
 
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpEntity = new HttpEntity<>("");
@@ -50,17 +45,5 @@ public class DoggoEndpoints {
             log.warn("Failed to fetch image from " + uri, e);
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
         }
-    }
-
-    @SneakyThrows({ IOException.class, URISyntaxException.class })
-    private URI randomUri() {
-        if (uris == null) {
-            ObjectMapper mapper = new ObjectMapper();
-            URL resource = getClass().getResource("/doggo-urls.json");
-            uris = mapper.readValue(resource, new TypeReference<>() { });
-        }
-
-        int index = ThreadLocalRandom.current().nextInt(uris.size());
-        return new URL(uris.get(index)).toURI();
     }
 }
