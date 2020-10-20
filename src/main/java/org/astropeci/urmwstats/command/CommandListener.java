@@ -45,10 +45,6 @@ public class CommandListener extends ListenerAdapter {
             return;
         }
 
-        if (!event.getChannel().getId().equals("726030448324509796")) {
-            return;
-        }
-
         String message = event.getMessage().getContentRaw().trim();
 
         if (!message.startsWith(prefix)) {
