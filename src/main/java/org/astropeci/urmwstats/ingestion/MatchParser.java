@@ -6,7 +6,6 @@ import org.astropeci.urmwstats.data.Match;
 import org.astropeci.urmwstats.data.MatchParticipant;
 import org.astropeci.urmwstats.data.Player;
 import org.astropeci.urmwstats.data.Skill;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.regex.Matcher;

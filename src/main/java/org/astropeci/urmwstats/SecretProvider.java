@@ -31,6 +31,10 @@ public class SecretProvider {
         return getEnv("ANNOUNCEMENT_CHANNEL_ID");
     }
 
+    public String getTestingGuildId() {
+        return getEnv("TESTING_GUILD_ID");
+    }
+
     private String getEnv(String variableName) {
         String value = env.get(variableName);
 

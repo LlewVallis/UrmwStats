@@ -6,7 +6,10 @@ import org.astropeci.urmwstats.data.Player;
 import org.astropeci.urmwstats.data.Skill;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;

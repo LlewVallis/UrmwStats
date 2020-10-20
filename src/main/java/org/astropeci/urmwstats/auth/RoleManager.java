@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import org.astropeci.urmwstats.SecretProvider;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,7 @@ public class RoleManager {
     );
 
     private final JDA jda;
+    private final SecretProvider secretProvider;
 
     private final Map<String, Result> cache = new MapMaker()
             .expiration(10, TimeUnit.MINUTES)
@@ -85,7 +87,11 @@ public class RoleManager {
     }
 
     private Guild getGuild() {
-        List<Guild> guilds = jda.getGuilds();
+        List<Guild> guilds = new ArrayList<>(jda.getGuilds());
+
+        String testingGuildId = secretProvider.getTestingGuildId();
+        guilds.removeIf(guild -> guild.getId().equals(testingGuildId));
+
         if (guilds.size() == 0) {
             log.error("The bot is not in any guilds, authentication will fail");
             return null;
