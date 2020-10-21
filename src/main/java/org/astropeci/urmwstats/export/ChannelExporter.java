@@ -3,6 +3,7 @@ package org.astropeci.urmwstats.export;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.Value;
 import net.dv8tion.jda.api.entities.Message;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.zip.GZIPOutputStream;
@@ -26,8 +28,12 @@ public class ChannelExporter {
         int messageCount;
     }
 
+    public CompletableFuture<Result> createExport(MessageChannel channel, Consumer<Integer> statusUpdate) {
+        return CompletableFuture.supplyAsync(() -> createExportSync(channel, statusUpdate));
+    }
+
     @SneakyThrows({ JsonProcessingException.class, IOException.class })
-    public Result createExport(MessageChannel channel, Consumer<Integer> statusUpdate) {
+    private Result createExportSync(MessageChannel channel, Consumer<Integer> statusUpdate) {
         ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
         GZIPOutputStream compressedOutput = new GZIPOutputStream(byteOutput);
         JsonGenerator json = new JsonFactory().createGenerator(compressedOutput);
@@ -57,14 +63,13 @@ public class ChannelExporter {
 
                         json.writeArrayFieldStart("attachments");
                         for (Message.Attachment attachment : message.getAttachments()) {
-                            InputStream content = attachment.retrieveInputStream().join();
+                            @Cleanup InputStream content = attachment.retrieveInputStream().join();
 
                             json.writeStartObject();
                             json.writeStringField("name", attachment.getFileName());
                             json.writeFieldName("content");
                             json.writeBinary(content, -1);
                             json.writeEndObject();
-
                         }
                         json.writeEndArray();
 

@@ -113,31 +113,31 @@ public class CommandListener extends ListenerAdapter {
         long startTime = System.currentTimeMillis();
         AtomicLong lastUpdateTime = new AtomicLong(startTime);
 
-        ChannelExporter.Result exportResult = channelExporter.createExport(event.getChannel(), count -> {
+        channelExporter.createExport(event.getChannel(), count -> {
             if (System.currentTimeMillis() - lastUpdateTime.get() > 2000) {
                 lastUpdateTime.set(System.currentTimeMillis());
                 statusMessage.editMessage(createStatusMessageContent(count)).queue();
             }
-        });
+        }).thenAccept(exportResult -> {
+            statusMessage
+                    .editMessage(createStatusMessageContent(exportResult.getMessageCount()))
+                    .queue();
 
-        statusMessage
-                .editMessage(createStatusMessageContent(exportResult.getMessageCount()))
-                .queue();
+            event.getChannel().sendMessage(String.format(
+                    "👍️ Exported `%s` messages in `%.1f` seconds",
+                    exportResult.getMessageCount(),
+                    (System.currentTimeMillis() - startTime) / 1000f
+            )).queue();
 
-        event.getChannel().sendMessage(String.format(
-                "👍️ Exported `%s` messages in `%.1f` seconds",
-                exportResult.getMessageCount(),
-                (System.currentTimeMillis() - startTime) / 1000f
-        )).queue();
-
-        event.getAuthor().openPrivateChannel().queue(dm -> {
-            dm.sendFile(exportResult.getContent(), "channel-export.json.gzip").queue(message -> {
-                event.getChannel().sendMessage("📨 Sent via DM").queue();
+            event.getAuthor().openPrivateChannel().queue(dm -> {
+                dm.sendFile(exportResult.getContent(), "channel-export.json.gzip").queue(message -> {
+                    event.getChannel().sendMessage("📨 Sent via DM").queue();
+                }, error -> {
+                    event.getChannel().sendMessage("❌ Could not send via DM").queue();
+                });
             }, error -> {
-                event.getChannel().sendMessage("❌ Could not send via DM").queue();
+                event.getChannel().sendMessage("❌ Could not open DM").queue();
             });
-        }, error -> {
-            event.getChannel().sendMessage("❌ Could not open DM").queue();
         });
     }
 
