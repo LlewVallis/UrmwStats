@@ -15,12 +15,13 @@ import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class CommandListener extends ListenerAdapter {
 
-    private final String prefix;
+    private final Set<String> prefixes;
     private final String testingGuildId;
     private final boolean producitonCommands;
 
@@ -42,7 +43,12 @@ public class CommandListener extends ListenerAdapter {
 
         jda.addEventListener(this);
 
-        prefix = String.format("<@!%s>", secretProvider.getDiscordClientId());
+        prefixes = Set.of(
+                String.format("<@!%s>", secretProvider.getDiscordClientId()),
+                String.format("<@%s>", secretProvider.getDiscordClientId()),
+                "%"
+        );
+
         testingGuildId = secretProvider.getTestingGuildId();
         producitonCommands = List.of(environment.getActiveProfiles()).contains("production-commands");
     }
@@ -59,7 +65,12 @@ public class CommandListener extends ListenerAdapter {
 
         String message = event.getMessage().getContentRaw().trim();
 
-        if (!message.startsWith(prefix)) {
+        String prefix = prefixes.stream()
+                .filter(message::startsWith)
+                .findAny()
+                .orElse(null);
+
+        if (prefix == null) {
             return;
         }
 
