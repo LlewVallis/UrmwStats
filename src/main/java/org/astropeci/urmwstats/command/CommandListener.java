@@ -2,9 +2,7 @@ package org.astropeci.urmwstats.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.astropeci.urmwstats.DoggoUriProvider;
@@ -12,15 +10,19 @@ import org.astropeci.urmwstats.SecretProvider;
 import org.astropeci.urmwstats.auth.NotStaffException;
 import org.astropeci.urmwstats.auth.RoleManager;
 import org.astropeci.urmwstats.export.ChannelExporter;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.List;
 
 @Component
 public class CommandListener extends ListenerAdapter {
 
     private final String prefix;
+    private final String testingGuildId;
+    private final boolean producitonCommands;
+
     private final RoleManager roleManager;
     private final ChannelExporter channelExporter;
     private final DoggoUriProvider doggoUriProvider;
@@ -30,17 +32,26 @@ public class CommandListener extends ListenerAdapter {
             SecretProvider secretProvider,
             RoleManager roleManager,
             ChannelExporter channelExporter,
-            DoggoUriProvider doggoUriProvider
+            DoggoUriProvider doggoUriProvider,
+            Environment environment
     ) {
         this.roleManager = roleManager;
         this.channelExporter = channelExporter;
         this.doggoUriProvider = doggoUriProvider;
+
         jda.addEventListener(this);
+
         prefix = String.format("<@!%s>", secretProvider.getDiscordClientId());
+        testingGuildId = secretProvider.getTestingGuildId();
+        producitonCommands = List.of(environment.getActiveProfiles()).contains("production-commands");
     }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        if (event.getGuild().getId().equals(testingGuildId) == producitonCommands) {
+            return;
+        }
+
         if (event.getAuthor().isBot()) {
             return;
         }
