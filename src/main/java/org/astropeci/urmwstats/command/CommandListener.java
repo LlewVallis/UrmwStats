@@ -2,6 +2,7 @@ package org.astropeci.urmwstats.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -105,21 +106,23 @@ public class CommandListener extends ListenerAdapter {
             return;
         }
 
-        event.getChannel().sendMessage("⚙️ Exporting channel").queue();
+        Message statusMessage = event.getChannel()
+                .sendMessage(createStatusMessageContent(0))
+                .complete();
 
         long startTime = System.currentTimeMillis();
         AtomicLong lastUpdateTime = new AtomicLong(startTime);
 
         ChannelExporter.Result exportResult = channelExporter.createExport(event.getChannel(), count -> {
-            if (System.currentTimeMillis() - lastUpdateTime.get() > 5000) {
+            if (System.currentTimeMillis() - lastUpdateTime.get() > 2000) {
                 lastUpdateTime.set(System.currentTimeMillis());
-
-                event.getChannel().sendMessage(String.format(
-                        "⏳ A total of `%s` messages have been exported thus far",
-                        count
-                )).queue();
+                statusMessage.editMessage(createStatusMessageContent(count)).queue();
             }
         });
+
+        statusMessage
+                .editMessage(createStatusMessageContent(exportResult.getMessageCount()))
+                .queue();
 
         event.getChannel().sendMessage(String.format(
                 "👍️ Exported `%s` messages in `%.1f` seconds",
@@ -136,5 +139,9 @@ public class CommandListener extends ListenerAdapter {
         }, error -> {
             event.getChannel().sendMessage("❌ Could not open DM").queue();
         });
+    }
+
+    private String createStatusMessageContent(int messagesProcessed) {
+        return String.format("⚙️ Exporting channel, `%s` messages exported thus far", messagesProcessed);
     }
 }
