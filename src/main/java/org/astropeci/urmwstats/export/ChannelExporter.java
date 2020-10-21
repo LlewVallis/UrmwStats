@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageReaction;
@@ -19,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.zip.GZIPOutputStream;
 
+@Slf4j
 @Component
 public class ChannelExporter {
 
@@ -29,6 +31,7 @@ public class ChannelExporter {
     }
 
     public CompletableFuture<Result> createExport(MessageChannel channel, Consumer<Integer> statusUpdate) {
+        log.info("Starting asynchronous channel export for #{}", channel.getName());
         return CompletableFuture.supplyAsync(() -> createExportSync(channel, statusUpdate));
     }
 
@@ -63,6 +66,13 @@ public class ChannelExporter {
 
                         json.writeArrayFieldStart("attachments");
                         for (Message.Attachment attachment : message.getAttachments()) {
+                            log.info(
+                                    "Downloading {} at {} from {}",
+                                    attachment.getFileName(),
+                                    attachment.getUrl(),
+                                    message.getJumpUrl()
+                            );
+
                             @Cleanup InputStream content = attachment.retrieveInputStream().join();
 
                             json.writeStartObject();
@@ -85,6 +95,8 @@ public class ChannelExporter {
         json.close();
 
         byte[] content = byteOutput.toByteArray();
+
+        log.info("Completed export and serialization of #{}", channel.getName());
         return new Result(content, messageCount.get());
     }
 }

@@ -1,5 +1,6 @@
 package org.astropeci.urmwstats.command;
 
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Slf4j
 @Component
 public class CommandListener extends ListenerAdapter {
 
@@ -76,6 +78,8 @@ public class CommandListener extends ListenerAdapter {
         }
 
         message = message.substring(prefix.length()).trim();
+        log.info("Command run in #{} by {}:\n{}", event.getChannel().getName(), event.getAuthor().getName(), message);
+
 
         switch (message) {
             case "doggo":
@@ -90,6 +94,8 @@ public class CommandListener extends ListenerAdapter {
     }
 
     private void doggo(MessageReceivedEvent event) {
+        log.info("Sending doggo");
+
         MessageEmbed embed = new EmbedBuilder()
                 .setColor(new Color(155, 89, 182))
                 .setImage(doggoUriProvider.randomUri().toString())
@@ -99,9 +105,12 @@ public class CommandListener extends ListenerAdapter {
     }
 
     private void export(MessageReceivedEvent event) {
+        log.info("Attempting export");
+
         try {
             roleManager.authenticate(event.getAuthor().getId());
         } catch (NotStaffException e) {
+            log.info("Export not permitted");
             event.getChannel().sendMessage("👮 Not permitted").queue();
             return;
         }
@@ -115,10 +124,17 @@ public class CommandListener extends ListenerAdapter {
 
         channelExporter.createExport(event.getChannel(), count -> {
             if (System.currentTimeMillis() - lastUpdateTime.get() > 2000) {
+                log.info("Exported {} messages in #{}", count, event.getChannel().getName());
+
                 lastUpdateTime.set(System.currentTimeMillis());
                 statusMessage.editMessage(createStatusMessageContent(count)).queue();
             }
-        }).thenAccept(exportResult -> {
+        }).whenComplete((exportResult, exportError) -> {
+            if (exportError != null) {
+                log.error("Error exporting", exportError);
+                return;
+            }
+
             statusMessage
                     .editMessage(createStatusMessageContent(exportResult.getMessageCount()))
                     .queue();
@@ -129,13 +145,17 @@ public class CommandListener extends ListenerAdapter {
                     (System.currentTimeMillis() - startTime) / 1000f
             )).queue();
 
+            log.info("Openning DM for export file");
             event.getAuthor().openPrivateChannel().queue(dm -> {
+                log.info("Sending export file");
                 dm.sendFile(exportResult.getContent(), "channel-export.json.gzip").queue(message -> {
                     event.getChannel().sendMessage("📨 Sent via DM").queue();
                 }, error -> {
+                    log.error("Failed to send export file", error);
                     event.getChannel().sendMessage("❌ Could not send via DM").queue();
                 });
             }, error -> {
+                log.error("Failed to open DM for export file", error);
                 event.getChannel().sendMessage("❌ Could not open DM").queue();
             });
         });
