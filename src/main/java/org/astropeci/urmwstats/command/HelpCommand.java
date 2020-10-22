@@ -7,7 +7,6 @@ import org.astropeci.urmwstats.auth.RoleManager;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -70,7 +69,7 @@ class HelpCommand implements Command {
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder().setTitle("Command help");
 
         for (Command command : relevantCommands) {
-            embed.addField("`" + command.usage() + "`", command.helpDescription(), true);
+            embed.addField(command.usage(), command.helpDescription(), true);
         }
 
         event.getChannel().sendMessage(embed.build()).queue();
