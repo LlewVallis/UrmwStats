@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.zip.GZIPOutputStream;
 
@@ -26,15 +26,16 @@ public class ChannelExporter {
     public static class Result {
         byte[] content;
         int messageCount;
-    }
-
-    public CompletableFuture<Result> createExport(MessageChannel channel, Consumer<Integer> statusUpdate) {
-        log.info("Starting asynchronous channel export for #{}", channel.getName());
-        return CompletableFuture.supplyAsync(() -> createExportSync(channel, statusUpdate));
+        int attachmentsSkipped;
+        int attachmentsDownloaded;
+        long attachmentSpaceCompressed;
+        long attachmentSpaceUncompressed;
     }
 
     @SneakyThrows({ JsonProcessingException.class, IOException.class })
-    private Result createExportSync(MessageChannel channel, Consumer<Integer> statusUpdate) {
+    public Result createExport(MessageChannel channel, Consumer<Integer> statusUpdate) {
+        log.info("Starting channel export for #{}", channel.getName());
+
         ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
         GZIPOutputStream compressedOutput = new GZIPOutputStream(byteOutput);
         JsonGenerator json = new JsonFactory().createGenerator(compressedOutput);
@@ -42,10 +43,13 @@ public class ChannelExporter {
         json.writeStartArray();
 
         AtomicInteger messageCount = new AtomicInteger();
+        AtomicInteger attachmentsSkipped = new AtomicInteger();
+        AtomicInteger attachmentsDownloaded = new AtomicInteger();
+        AtomicLong attachmentSpaceCompressed = new AtomicLong();
+        AtomicLong attachmentSpaceUncompressed = new AtomicLong();
+
         channel.getIterableHistory()
                 .forEachRemaining(message -> {
-                    statusUpdate.accept(messageCount.getAndIncrement());
-
                     try {
                         json.writeStartObject();
 
@@ -75,12 +79,23 @@ public class ChannelExporter {
 
                                 byte[] content = attachment.retrieveInputStream().join().readAllBytes();
 
+                                ByteArrayOutputStream compressedContentOut = new ByteArrayOutputStream();
+                                new GZIPOutputStream(compressedContentOut).write(content);
+                                byte[] compressedContent = compressedContentOut.toByteArray();
+
                                 json.writeStartObject();
                                 json.writeStringField("name", attachment.getFileName());
                                 json.writeFieldName("content");
-                                json.writeBinary(content);
+                                json.writeBinary(compressedContent);
                                 json.writeEndObject();
+
+                                attachmentSpaceUncompressed.addAndGet(content.length);
+                                attachmentSpaceCompressed.addAndGet(compressedContent.length);
+
+                                attachmentsDownloaded.incrementAndGet();
                             }
+                        } else {
+                            attachmentsSkipped.addAndGet(message.getAttachments().size());
                         }
 
                         json.writeEndArray();
@@ -90,6 +105,7 @@ public class ChannelExporter {
                         throw new RuntimeException(e);
                     }
 
+                    statusUpdate.accept(messageCount.incrementAndGet());
                     return true;
                 });
 
@@ -99,6 +115,13 @@ public class ChannelExporter {
         byte[] content = byteOutput.toByteArray();
 
         log.info("Completed export and serialization of #{}", channel.getName());
-        return new Result(content, messageCount.get());
+        return new Result(
+                content,
+                messageCount.get(),
+                attachmentsSkipped.get(),
+                attachmentsDownloaded.get(),
+                attachmentSpaceCompressed.get(),
+                attachmentSpaceUncompressed.get()
+        );
     }
 }

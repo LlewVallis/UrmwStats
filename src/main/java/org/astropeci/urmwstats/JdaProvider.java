@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ public class JdaProvider {
         JDA jda = JDABuilder.createLight(secretProvider.getDiscordBotToken(), GatewayIntent.GUILD_MESSAGES)
                 .build();
 
+        jda.getPresence().setActivity(Activity.playing("%help"));
         jda.awaitReady();
 
         return jda;

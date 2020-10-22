@@ -59,6 +59,15 @@ public class RoleManager {
         }
     }
 
+    public boolean isAuthenticated(String id) {
+        try {
+            authenticate(id);
+            return true;
+        } catch (NotStaffException e) {
+            return false;
+        }
+    }
+
     private Result determineAuthenticationResult(String id) {
         log.info("Performing authentication lookup for " + id);
 
