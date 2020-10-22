@@ -9,9 +9,6 @@ import org.astropeci.urmwstats.data.*;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -69,7 +66,7 @@ public class StatsCommand implements Command {
         appendTopTourneyWinners(embed);
         appendLongestStreaks(embed);
         appendMostWins(embed);
-        appendMostActive(embed);
+        appendHighestWinRate(embed);
 
         embed.setFooter(String.format(
                 "Tracking %s players, %s matches and %s tourneys",
@@ -162,27 +159,25 @@ public class StatsCommand implements Command {
         }
     }
 
-    private void appendMostActive(EmbedBuilder embed) {
-        Instant oneMonthAgo = ZonedDateTime.now(ZoneOffset.UTC).minusMonths(1).toInstant();
-
+    private void appendHighestWinRate(EmbedBuilder embed) {
         List<String> playerStrings = playerRepository.getPlayersByRanking().stream()
-                .sorted(Comparator.<Player>comparingInt(player ->
-                        recentMatches(player, oneMonthAgo)
-                ).reversed())
+                .filter(player -> player.getWins() + player.getLosses() >= 10)
+                .sorted(Comparator.comparingDouble(this::winRate).reversed())
                 .limit(3)
-                .filter(player -> recentMatches(player, oneMonthAgo) > 0)
-                .map(Player::getName)
+                .map(player -> String.format(
+                        "%s (%.2f%%)",
+                        player.getName(),
+                        winRate(player) * 100
+                ))
                 .collect(Collectors.toList());
 
         if (playerStrings.size() > 0) {
-            embed.addField("Most active monthly", rankingString(playerStrings), true);
+            embed.addField("Highest win rate", rankingString(playerStrings), true);
         }
     }
 
-    private int recentMatches(Player player, Instant cutoff) {
-        return (int) matchRepository.mostRecent(Integer.MAX_VALUE, player.getName()).stream()
-                .filter(match -> match.getTimestamp().isAfter(cutoff))
-                .count();
+    private double winRate(Player player) {
+        return (double) player.getWins() / (player.getWins() + player.getLosses());
     }
 
     private String rankingString(List<String> values) {
