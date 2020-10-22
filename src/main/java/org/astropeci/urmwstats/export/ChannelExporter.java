@@ -3,7 +3,6 @@ package org.astropeci.urmwstats.export;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -65,22 +63,26 @@ public class ChannelExporter {
                         json.writeEndArray();
 
                         json.writeArrayFieldStart("attachments");
-                        for (Message.Attachment attachment : message.getAttachments()) {
-                            log.info(
-                                    "Downloading {} at {} from {}",
-                                    attachment.getFileName(),
-                                    attachment.getUrl(),
-                                    message.getJumpUrl()
-                            );
 
-                            @Cleanup InputStream content = attachment.retrieveInputStream().join();
+                        if (message.isPinned() || message.getReactionByUnicode("📌") != null) {
+                            for (Message.Attachment attachment : message.getAttachments()) {
+                                log.info(
+                                        "Downloading {} at {} from {}",
+                                        attachment.getFileName(),
+                                        attachment.getUrl(),
+                                        message.getJumpUrl()
+                                );
 
-                            json.writeStartObject();
-                            json.writeStringField("name", attachment.getFileName());
-                            json.writeFieldName("content");
-                            json.writeBinary(content, -1);
-                            json.writeEndObject();
+                                byte[] content = attachment.retrieveInputStream().join().readAllBytes();
+
+                                json.writeStartObject();
+                                json.writeStringField("name", attachment.getFileName());
+                                json.writeFieldName("content");
+                                json.writeBinary(content);
+                                json.writeEndObject();
+                            }
                         }
+
                         json.writeEndArray();
 
                         json.writeEndObject();
