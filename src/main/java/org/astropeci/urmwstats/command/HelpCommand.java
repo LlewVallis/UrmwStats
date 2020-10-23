@@ -57,6 +57,7 @@ class HelpCommand implements Command {
         boolean userIsStaff = roleManager.isAuthenticated(event.getAuthor().getId());
 
         List<Command> relevantCommands = commands.stream()
+                .filter(command -> command.helpPriority() >= 0)
                 .filter(command -> !command.isStaffOnly() || userIsStaff)
                 .filter(command -> containsIgnoreCase(command.label(), search))
                 .sorted(Comparator.comparingInt(Command::helpPriority).reversed())
