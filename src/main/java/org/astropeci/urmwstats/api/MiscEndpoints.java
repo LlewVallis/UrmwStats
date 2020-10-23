@@ -2,6 +2,7 @@ package org.astropeci.urmwstats.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.astropeci.urmwstats.TrueskillSettings;
 import org.astropeci.urmwstats.data.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,15 +31,6 @@ public class MiscEndpoints {
         int matchCount;
         int tourneyCount;
         TrueskillSettings trueskillSettings;
-    }
-
-    @Value
-    private static class TrueskillSettings {
-        double mu = 1475;
-        double sigma = 100;
-        double beta = 50;
-        double tau = 5;
-        double drawProbability = 0.05;
     }
 
     @Value

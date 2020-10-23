@@ -65,7 +65,10 @@ public class StatsCommand implements Command {
 
     private void executePlayerStats(String fuzzyPlayerName, MessageReceivedEvent event) {
         Player player = CommandUtil.matchPlayer(playerRepository, fuzzyPlayerName).orElseThrow(() ->
-                new CommandException("🔍 Could not find that player, try refining your search")
+                new CommandException(String.format(
+                        "🔍 Could not find `%s`, try refining your search",
+                        fuzzyPlayerName
+                ))
         );
 
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder()
@@ -109,7 +112,6 @@ public class StatsCommand implements Command {
                 player.getTimesPlacedThird()
         ), true);
 
-        embed.setTimestamp(repositoryCoordinator.getLastUpdated());
         event.getChannel().sendMessage(embed.build()).queue();
     }
 

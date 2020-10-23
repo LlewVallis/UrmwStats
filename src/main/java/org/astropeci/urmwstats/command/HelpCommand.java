@@ -66,7 +66,7 @@ class HelpCommand implements Command {
             throw new CommandException("🤷 No command matched that search");
         }
 
-        EmbedBuilder embed = CommandUtil.coloredEmbedBuilder().setTitle("Command help");
+        EmbedBuilder embed = CommandUtil.coloredEmbedBuilder().setTitle("📖 Command help");
 
         for (Command command : relevantCommands) {
             embed.addField(command.usage(), command.helpDescription(), true);
