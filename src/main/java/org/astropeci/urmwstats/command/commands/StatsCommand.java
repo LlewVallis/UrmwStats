@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.command.Command;
+import org.astropeci.urmwstats.command.CommandException;
 import org.astropeci.urmwstats.command.CommandUtil;
 import org.astropeci.urmwstats.data.*;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,7 +32,7 @@ public class StatsCommand implements Command {
 
     @Override
     public String usage() {
-        return "stats";
+        return "stats [player]";
     }
 
     @Override
@@ -50,11 +52,65 @@ public class StatsCommand implements Command {
 
     @Override
     public void execute(List<String> arguments, MessageReceivedEvent event) {
-        if (arguments.size() != 0) {
+        if (arguments.size() != 0 && arguments.size() != 1) {
             CommandUtil.throwWrongNumberOfArguments();
         }
 
-        executeGlobalStats(event);
+        if (arguments.size() == 0) {
+            executeGlobalStats(event);
+        } else {
+            executePlayerStats(arguments.get(0), event);
+        }
+    }
+
+    private void executePlayerStats(String fuzzyPlayerName, MessageReceivedEvent event) {
+        Player player = CommandUtil.matchPlayer(playerRepository, fuzzyPlayerName).orElseThrow(() ->
+                new CommandException("🔍 Could not find that player, try refining your search")
+        );
+
+        EmbedBuilder embed = CommandUtil.coloredEmbedBuilder()
+                .setTitle("📈 Statistics for " + player.getName(), "https://urmw.live/player/" + player.getName());
+
+        embed.addField("Skill", String.format(
+                "%.0f, %.0f",
+                player.getSkill().getTrueskill(),
+                player.getSkill().getDeviation()
+        ), true);
+
+        embed.addField("Peak skill", String.format(
+                "%.0f, %.0f",
+                player.getPeakSkill().getTrueskill(),
+                player.getPeakSkill().getDeviation()
+        ), true);
+
+        String rankName = player.getRankName().substring(0, 1).toUpperCase() + player.getRankName().substring(1);
+        int ranking = player.getRanking() + 1;
+        embed.addField("Ranking", String.format(
+                "%s, %s%s",
+                rankName,
+                ranking,
+                CommandUtil.ordinalSuffix(ranking)
+        ), true);
+
+        int streak = player.getStreak();
+        String streakType = streak == 1 ? "win" : streak == -1 ? "loss" : streak < 0 ? "losses" : "wins";
+        embed.addField("Matches", String.format(
+                "**Won**: %s matches\n**Lost**: %s matches\n**Streak**: %s %s",
+                player.getWins(),
+                player.getLosses(),
+                Math.abs(player.getStreak()),
+                streakType
+        ), true);
+
+        embed.addField("Tourney placings", String.format(
+                "**1st**: %s times\n**2nd**: %s times\n**3rd**: %s times",
+                player.getTimesPlacedFirst(),
+                player.getTimesPlacedSecond(),
+                player.getTimesPlacedThird()
+        ), true);
+
+        embed.setTimestamp(repositoryCoordinator.getLastUpdated());
+        event.getChannel().sendMessage(embed.build()).queue();
     }
 
     private void executeGlobalStats(MessageReceivedEvent event) {
@@ -188,7 +244,7 @@ public class StatsCommand implements Command {
                     "%s**%s%s**: %s",
                     i == 0 ? "" : "\n",
                     i + 1,
-                    i == 0 ? "st" : i == 1 ? "nd" : i == 2 ? "rd" : "th",
+                    CommandUtil.ordinalSuffix(i + 1),
                     values.get(i)
             ));
         }
