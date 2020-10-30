@@ -19,8 +19,11 @@ public class JdaProvider {
     @SneakyThrows({ InterruptedException.class, LoginException.class })
     public JDA createJda(SecretProvider secretProvider) {
         log.info("Connecting to the Discord API");
-        JDA jda = JDABuilder.createLight(secretProvider.getDiscordBotToken(), GatewayIntent.GUILD_MESSAGES)
-                .build();
+        JDA jda = JDABuilder.createLight(
+                secretProvider.getDiscordBotToken(),
+                GatewayIntent.GUILD_MESSAGES,
+                GatewayIntent.DIRECT_MESSAGES
+        ).build();
 
         jda.getPresence().setActivity(Activity.playing("%help"));
         jda.awaitReady();

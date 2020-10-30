@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -83,8 +84,8 @@ public class IngestionController extends ListenerAdapter implements AutoCloseabl
     @SneakyThrows({ ExecutionException.class })
     private void performUpdate() throws InterruptedException {
         log.info("Performing ingestion");
-        TextChannel leaderboardChannel = getChannelByName(LEADERBOARD_CHANNEL);
-        TextChannel historyChannel = getChannelByName(HISTORY_CHANNEL);
+        MessageChannel leaderboardChannel = getChannelByName(LEADERBOARD_CHANNEL);
+        MessageChannel historyChannel = getChannelByName(HISTORY_CHANNEL);
 
         CompletableFuture<List<Message>> leaderboardMessagesFuture = readMessages(leaderboardChannel);
         CompletableFuture<List<Message>> historyMessagesFuture = readMessages(historyChannel);
@@ -105,8 +106,8 @@ public class IngestionController extends ListenerAdapter implements AutoCloseabl
         log.info("Successfully ingested and updated");
     }
 
-    private TextChannel getChannelByName(String name) {
-        Set<TextChannel> matches = jda.getTextChannels().stream()
+    private MessageChannel getChannelByName(String name) {
+        Set<MessageChannel> matches = jda.getTextChannels().stream()
                 .filter(channel -> channel.getName().equals(name))
                 .collect(Collectors.toSet());
 
@@ -121,11 +122,11 @@ public class IngestionController extends ListenerAdapter implements AutoCloseabl
         return matches.stream().findAny().get();
     }
 
-    private CompletableFuture<List<Message>> readMessages(TextChannel channel) {
+    private CompletableFuture<List<Message>> readMessages(MessageChannel channel) {
         return channel.getIterableHistory().takeAsync(MESSAGE_HISTORY_LIMIT);
     }
 
-    private boolean isTrackedChannel(TextChannel channel) {
+    private boolean isTrackedChannel(MessageChannel channel) {
         return channel.getName().equals(LEADERBOARD_CHANNEL) || channel.getName().equals(HISTORY_CHANNEL);
     }
 

@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -65,7 +66,11 @@ public class CommandDispatcher extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getGuild().getId().equals(testingGuildId) == productionCommands) {
+        if (event.isFromGuild() && event.getGuild().getId().equals(testingGuildId) == productionCommands) {
+            return;
+        }
+
+        if (!event.isFromGuild() && !productionCommands) {
             return;
         }
 
@@ -73,13 +78,14 @@ public class CommandDispatcher extends ListenerAdapter {
             return;
         }
 
-        executor.execute(() -> dispatch(event));
-    }
-
-    private void dispatch(MessageReceivedEvent event) {
         String message = event.getMessage().getContentRaw().trim();
 
-        String prefix = prefixes.stream()
+        Stream<String> prefixesStream = prefixes.stream();
+        if (!event.isFromGuild()) {
+            prefixesStream = Stream.concat(prefixesStream, Stream.of(""));
+        }
+
+        String prefix = prefixesStream
                 .filter(message::startsWith)
                 .findAny()
                 .orElse(null);
@@ -94,6 +100,11 @@ public class CommandDispatcher extends ListenerAdapter {
             return;
         }
 
+        String finalMessage = message;
+        executor.execute(() -> dispatch(finalMessage, event));
+    }
+
+    private void dispatch(String message, MessageReceivedEvent event) {
         List<String> commandParts = List.of(message.split("\\s+"));
 
         log.info("Command started in #{} by {}: {}", event.getChannel().getName(), event.getAuthor().getName(), message);
@@ -115,10 +126,12 @@ public class CommandDispatcher extends ListenerAdapter {
     }
 
     private void handleNotFound(String message, MessageReceivedEvent event) {
-        log.warn("Command '{}' was not found", message);
+        log.info("Command '{}' was not found", message);
 
-        event.getChannel().sendMessage("🤷 Command not found").queue();
-        event.getMessage().addReaction(FAILURE_EMOJI).queue();
+        if (event.isFromGuild()) {
+            event.getChannel().sendMessage("🤷 Command not found").queue();
+            event.getMessage().addReaction(FAILURE_EMOJI).queue();
+        }
     }
 
     private void handle(Command command, List<String> commandParts, MessageReceivedEvent event) {

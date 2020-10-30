@@ -1,20 +1,22 @@
 package org.astropeci.urmwstats.command.commands;
 
 import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.astropeci.urmwstats.DoggoUriProvider;
+import org.astropeci.urmwstats.DoggoProvider;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandUtil;
 import org.springframework.stereotype.Component;
 
+import java.util.Base64;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class DoggoCommand implements Command {
 
-    private final DoggoUriProvider doggoUriProvider;
+    private final DoggoProvider doggoProvider;
 
     @Override
     public String label() {
@@ -47,10 +49,6 @@ public class DoggoCommand implements Command {
             CommandUtil.throwWrongNumberOfArguments();
         }
 
-        MessageEmbed embed = CommandUtil.coloredEmbedBuilder()
-                .setImage(doggoUriProvider.randomUri().toString())
-                .build();
-
-        event.getChannel().sendMessage(embed).queue();
+        event.getChannel().sendFile(doggoProvider.randomDoggo(), "doggo.jpg").complete();
     }
 }
