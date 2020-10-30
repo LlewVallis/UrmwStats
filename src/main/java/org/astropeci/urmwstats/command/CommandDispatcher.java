@@ -2,6 +2,7 @@ package org.astropeci.urmwstats.command;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.astropeci.urmwstats.SecretProvider;
@@ -24,6 +25,9 @@ public class CommandDispatcher extends ListenerAdapter {
     private static final String PROCESSING_EMOJI = "🔄";
     private static final String SUCCESS_EMOJI = "✅";
     private static final String FAILURE_EMOJI = "❌";
+
+    private static final String PRODUCTION_PREFIX = "prod%";
+    private static final String TESTING_PREFIX = "dev%";
 
     private final List<Command> commands;
     private final TaskExecutor executor;
@@ -50,7 +54,7 @@ public class CommandDispatcher extends ListenerAdapter {
         prefixes = Set.of(
                 String.format("<@!%s>", secretProvider.getDiscordClientId()),
                 String.format("<@%s>", secretProvider.getDiscordClientId()),
-                "%"
+                "%", PRODUCTION_PREFIX, TESTING_PREFIX
         );
 
         testingGuildId = secretProvider.getTestingGuildId();
@@ -66,14 +70,6 @@ public class CommandDispatcher extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.isFromGuild() && event.getGuild().getId().equals(testingGuildId) == productionCommands) {
-            return;
-        }
-
-        if (!event.isFromGuild() && !productionCommands) {
-            return;
-        }
-
         if (event.getAuthor().isBot()) {
             return;
         }
@@ -94,17 +90,41 @@ public class CommandDispatcher extends ListenerAdapter {
             return;
         }
 
+        executor.execute(() -> dispatch(message, prefix, event));
+    }
+
+    private boolean shouldRun(String prefix, MessageReceivedEvent event) {
+        if (prefix.equals(PRODUCTION_PREFIX)) {
+            return productionCommands;
+        } else if (prefix.equals(TESTING_PREFIX)) {
+            if (productionCommands) {
+                return false;
+            }
+
+            if (!roleManager.isAuthenticated(event.getAuthor().getId())) {
+                sendNotPermitted(event);
+                return false;
+            } else {
+                return true;
+            }
+        } else if (event.isFromGuild()) {
+            return event.getGuild().getId().equals(testingGuildId) != productionCommands;
+        } else {
+            return productionCommands;
+        }
+    }
+
+    private void dispatch(String message, String prefix, MessageReceivedEvent event) {
+        if (!shouldRun(prefix, event)) {
+            return;
+        }
+
         message = message.substring(prefix.length()).trim();
         if (message.isEmpty()) {
             log.info("Ignoring blank command");
             return;
         }
 
-        String finalMessage = message;
-        executor.execute(() -> dispatch(finalMessage, event));
-    }
-
-    private void dispatch(String message, MessageReceivedEvent event) {
         List<String> commandParts = List.of(message.split("\\s+"));
 
         log.info("Command started in #{} by {}: {}", event.getChannel().getName(), event.getAuthor().getName(), message);
@@ -139,10 +159,7 @@ public class CommandDispatcher extends ListenerAdapter {
 
         if (command.isStaffOnly() && !roleManager.isAuthenticated(event.getAuthor().getId())) {
             log.info("Denying command from {} since they are not staff", event.getAuthor().getName());
-
-            event.getChannel().sendMessage("👮 You do not have permission").queue();
-            event.getMessage().addReaction(FAILURE_EMOJI).queue();
-
+            sendNotPermitted(event);
             return;
         }
 
@@ -180,5 +197,10 @@ public class CommandDispatcher extends ListenerAdapter {
             event.getChannel().sendMessage("🔥 Internal error").queue();
             return false;
         }
+    }
+
+    private void sendNotPermitted(MessageReceivedEvent event) {
+        event.getChannel().sendMessage("👮 You do not have permission").queue();
+        event.getMessage().addReaction(FAILURE_EMOJI).queue();
     }
 }
