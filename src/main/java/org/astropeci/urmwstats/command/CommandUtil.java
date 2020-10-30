@@ -5,6 +5,9 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.ToStringFunction;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.data.Player;
 import org.astropeci.urmwstats.data.PlayerRepository;
 
@@ -61,5 +64,33 @@ public class CommandUtil {
         } else {
             return "th";
         }
+    }
+
+    public static MessageChannel parseChannel(String input, MessageReceivedEvent event, JDA jda) {
+        if (!input.startsWith("<#") || !input.endsWith(">")) {
+            return throwInvalidChannelSyntax(event);
+        }
+
+        input = input.substring(2, input.length() - 1);
+
+        MessageChannel channel;
+        try {
+            channel = jda.getTextChannelById(input);
+        } catch (NumberFormatException e) {
+            return throwInvalidChannelSyntax(event);
+        }
+
+        if (channel == null) {
+            throw new CommandException("❌ That channel either doesn't exist or URMW Stats doesn't have permission to see it");
+        }
+
+        return channel;
+    }
+
+    private <T> T throwInvalidChannelSyntax(MessageReceivedEvent event) {
+        throw new CommandException(String.format(
+                "❌ Invalid channel syntax, tag it directly (e.g. <#%s>)",
+                event.getChannel().getId()
+        ));
     }
 }

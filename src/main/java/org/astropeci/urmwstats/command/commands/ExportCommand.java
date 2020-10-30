@@ -3,7 +3,9 @@ package org.astropeci.urmwstats.command.commands;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.command.Command;
@@ -21,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ExportCommand implements Command {
 
     private final ChannelExporter channelExporter;
+    private final JDA jda;
 
     @Override
     public String label() {
@@ -29,7 +32,7 @@ public class ExportCommand implements Command {
 
     @Override
     public String usage() {
-        return "export";
+        return "export <channel>";
     }
 
     @Override
@@ -49,11 +52,13 @@ public class ExportCommand implements Command {
 
     @Override
     public void execute(List<String> arguments, MessageReceivedEvent event) {
-        if (arguments.size() != 0) {
+        if (arguments.size() != 1) {
             CommandUtil.throwWrongNumberOfArguments();
         }
 
-        String baseStatusMessage = "⚙️ Exporting channel";
+        MessageChannel channel = CommandUtil.parseChannel(arguments.get(0), event, jda);
+
+        String baseStatusMessage = String.format("⚙️ Exporting <#%s>", channel.getId());
 
         Message statusMessage = event.getChannel()
                 .sendMessage(baseStatusMessage)
@@ -62,9 +67,9 @@ public class ExportCommand implements Command {
         long startTime = System.currentTimeMillis();
         AtomicLong lastUpdateTime = new AtomicLong(startTime);
 
-        ChannelExporter.Result result = channelExporter.createExport(event.getChannel(), count -> {
+        ChannelExporter.Result result = channelExporter.createExport(channel, count -> {
             if (System.currentTimeMillis() - lastUpdateTime.get() > 1000) {
-                log.info("Exported {} messages in #{}", count, event.getChannel().getName());
+                log.info("Exported {} messages in #{}", count, channel.getName());
                 lastUpdateTime.set(System.currentTimeMillis());
 
                 statusMessage.editMessage(String.format(
@@ -79,14 +84,10 @@ public class ExportCommand implements Command {
         statusMessage.editMessage(baseStatusMessage + " (done)").queue();
 
         EmbedBuilder successEmbed = CommandUtil.coloredEmbedBuilder()
-                .setTitle(String.format(
-                        "🎉 Finished export in `%.1f` seconds",
-                        duration
-                ))
                 .addField("Messages", String.format(
                         "Exported `%s` messages from <#%s> at a rate of `%.1f` per second",
                         result.getMessageCount(),
-                        event.getChannel().getId(),
+                        channel.getId(),
                         result.getMessageCount() / duration
                 ), true)
                 .addField("Attachments", String.format(
@@ -97,34 +98,21 @@ public class ExportCommand implements Command {
                         result.getAttachmentSpaceUncompressed() / 1024f / 1024f
                 ), true);
 
-        event.getChannel().sendMessage(successEmbed.build()).queue();
-
-        log.info("Openning DM for export file");
-
-        PrivateChannel dm;
-        try {
-            dm = event.getAuthor().openPrivateChannel().complete();
-        } catch (RuntimeException e) {
-            log.error("Failed to open DM for export file", e);
-            throw new CommandException("🚫 Could not open DM");
-        }
-
         byte[] content = result.getContent();
         if (content.length > 8 * 1024 * 1024) {
             log.error("Export too large to send, was {} bytes", content.length);
             throw new CommandException(String.format(
-                    "📚 File too large to send (`%.1f` MB)",
+                    "📚 File too large to send (`%.1f` of 8 MB)",
                     content.length / 1024f / 1024f
             ));
         }
 
-        try {
-            dm.sendFile(content, "channel-export.json.gzip").complete();
-        } catch (RuntimeException e) {
-            log.error("Failed to upload export file to DM", e);
-            throw new CommandException("🚫 Could not send via DM");
-        }
-
-        event.getChannel().sendMessage("📨 Sent via DM").queue();
+        event.getChannel().sendMessage(String.format(
+                "🎉 Finished export in `%.1f` seconds",
+                duration
+        ))
+                .embed(successEmbed.build())
+                .addFile(content, "export.json.gz")
+                .queue();
     }
 }
