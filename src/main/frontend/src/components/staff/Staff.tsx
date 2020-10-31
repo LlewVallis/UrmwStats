@@ -9,7 +9,7 @@ import Poll from "./Poll";
 const Staff = () => {
   useEffect(() => {
     loginDetails.catch(() => {
-      window.location.href = "/oauth2/authorization/discord";
+      window.location.href = "/login";
     });
   }, []);
 

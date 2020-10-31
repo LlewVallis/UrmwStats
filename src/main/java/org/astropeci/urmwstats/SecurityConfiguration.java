@@ -1,6 +1,7 @@
 package org.astropeci.urmwstats;
 
 import lombok.RequiredArgsConstructor;
+import org.astropeci.urmwstats.auth.LoginSuccessHandler;
 import org.astropeci.urmwstats.auth.RestOAuthAccessTokenClient;
 import org.astropeci.urmwstats.auth.RestOAuthUserService;
 import org.springframework.core.env.Environment;
@@ -8,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.stereotype.Component;
@@ -54,7 +57,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .userInfoEndpoint(u -> u
                             .userService(userService)
                     )
-                    .defaultSuccessUrl("/", true)
+                    .successHandler(new LoginSuccessHandler())
                     .clientRegistrationRepository(clients)
             );
         }

@@ -40,6 +40,7 @@ public class RestOAuthAccessTokenClient implements OAuth2AccessTokenResponseClie
 
     private final Validator validator;
 
+    @Override
     public OAuth2AccessTokenResponse getTokenResponse(OAuth2AuthorizationCodeGrantRequest authorizationGrantRequest) throws OAuth2AuthenticationException {
         ClientRegistration clientRegistration = authorizationGrantRequest.getClientRegistration();
         String tokenUri = clientRegistration.getProviderDetails().getTokenUri();

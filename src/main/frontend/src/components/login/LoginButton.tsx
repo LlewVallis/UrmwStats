@@ -6,7 +6,7 @@ export interface LoginButtonProps {
 
 const LoginButton = () => (
   <a
-    href="/oauth2/authorization/discord"
+    href="/login"
     className="text-white"
     style={{
       textAlign: "center",
