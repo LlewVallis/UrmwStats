@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandException;
 import org.astropeci.urmwstats.command.CommandUtil;
@@ -66,6 +67,12 @@ public class ExportCommand implements Command {
 
         long startTime = System.currentTimeMillis();
         AtomicLong lastUpdateTime = new AtomicLong(startTime);
+
+        try {
+            channel.getHistory();
+        } catch (InsufficientPermissionException e) {
+            throw new CommandException("❌ URMW Stats doesn't have permission to that channel");
+        }
 
         ChannelExporter.Result result = channelExporter.createExport(channel, count -> {
             if (System.currentTimeMillis() - lastUpdateTime.get() > 1000) {
