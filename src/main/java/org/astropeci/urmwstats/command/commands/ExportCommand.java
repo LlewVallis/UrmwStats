@@ -114,12 +114,23 @@ public class ExportCommand implements Command {
             ));
         }
 
-        event.getChannel().sendMessage(String.format(
-                "🎉 Finished export in `%.1f` seconds",
+        String baseSuccessMessage = "🎉 Finished export in `%.1f` seconds";
+        String fileName = "export.json.gz";
+
+        Message successMessage = event.getChannel().sendMessage(String.format(
+                baseSuccessMessage,
                 duration
         ))
                 .embed(successEmbed.build())
-                .addFile(content, "export.json.gz")
-                .queue();
+                .addFile(content, fileName)
+                .complete();
+
+        successMessage.editMessage(String.format(
+                baseSuccessMessage + "\nhttps://urmw.live/export/%s/%s/%s",
+                duration,
+                successMessage.getChannel().getId(),
+                successMessage.getAttachments().get(0).getId(),
+                fileName
+        )).queue();
     }
 }

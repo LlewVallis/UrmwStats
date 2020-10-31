@@ -18,6 +18,7 @@ import Calculator from "./calculator/Calculator";
 import Staff from "./staff/Staff";
 
 import "react-toastify/dist/ReactToastify.css";
+import Export from "./export/Export";
 
 export const PrimaryColor = "#663399";
 export const SecondaryColor = "#ff4c81";
@@ -116,6 +117,9 @@ export default class App extends Component<{}, AppState> {
             </Route>
             <Route path="/player/:name">
               <Player />
+            </Route>
+            <Route path="/export/:channelId/:attachmentId/:fileName">
+              <Export />
             </Route>
             <Route path="/staff">
               <Staff />

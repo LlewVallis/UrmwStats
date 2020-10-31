@@ -17,7 +17,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class MiscEndpoints {
+public class InfoEndpoints {
 
     private final RepositoryCoordinator repositoryCoordinator;
     private final PlayerRepository playerRepository;
