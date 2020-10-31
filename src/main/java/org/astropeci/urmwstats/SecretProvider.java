@@ -27,12 +27,16 @@ public class SecretProvider {
         return getEnv("MONGO_URI");
     }
 
+    public String getTestingGuildId() {
+        return getEnv("TESTING_GUILD_ID");
+    }
+
     public String getAnnouncementChannelId() {
         return getEnv("ANNOUNCEMENT_CHANNEL_ID");
     }
 
-    public String getTestingGuildId() {
-        return getEnv("TESTING_GUILD_ID");
+    public String getTourneyChannelId() {
+        return getEnv("TOURNEY_CHANNEL_ID");
     }
 
     private String getEnv(String variableName) {
