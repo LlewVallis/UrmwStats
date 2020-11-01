@@ -2,6 +2,7 @@ package org.astropeci.urmwstats.template.render;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.astropeci.urmwstats.TimeUtils;
 import org.astropeci.urmwstats.command.CommandUtil;
 import org.astropeci.urmwstats.template.TemplateParseException;
 import org.astropeci.urmwstats.template.TemplateRenderException;
@@ -70,7 +71,7 @@ public class EmbedNode implements RenderNode {
         if (timestamp.isEmpty()) {
             this.timestamp = null;
         } else {
-            this.timestamp = RenderUtil.parseDate(timestamp);
+            this.timestamp = TimeUtils.parseDate(timestamp);
             if (this.timestamp == null) {
                 throw new TemplateParseException("could not decipher time \"" + timestamp + "\"");
             }

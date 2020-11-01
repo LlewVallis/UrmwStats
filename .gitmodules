@@ -1,0 +1,3 @@
+[submodule "natty"]
+	path = natty
+	url = https://github.com/LlewVallis/natty

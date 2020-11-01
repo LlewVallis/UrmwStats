@@ -1,3 +1,3 @@
-target
-src/main/frontend/node_modules
-src/main/frontend/build
+application/target
+application/src/main/frontend/node_modules
+application/src/main/frontend/build

@@ -1,4 +1,2 @@
-target/
 .env
 keystore.p12
-src/main/resources/application-prod.yml

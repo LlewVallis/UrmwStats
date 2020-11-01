@@ -1,8 +1,7 @@
 package org.astropeci.urmwstats.command.commands;
 
-import com.joestelmach.natty.DateGroup;
-import com.joestelmach.natty.Parser;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.astropeci.urmwstats.TimeUtils;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandException;
 import org.springframework.stereotype.Component;
@@ -53,7 +52,7 @@ public class TimeCommand implements Command {
             time = now;
         } else {
             String input = String.join(" ", arguments);
-            time = inferTime(input, now);
+            time = TimeUtils.parseDate(input, now);
         }
 
         if (time == null) {
@@ -104,27 +103,5 @@ public class TimeCommand implements Command {
                     now.isBefore(time) ? "" : " ago"
             ).queue();
         }
-    }
-
-    private Instant inferTime(String input, Instant now) {
-        Parser parser = new Parser(TimeZone.getTimeZone("GMT"));
-        List<DateGroup> groups = parser.parse(input, Date.from(now));
-
-        if (groups.size() != 1) {
-            return null;
-        }
-
-        DateGroup group = groups.get(0);
-
-        if (group.getDates().size() != 1) {
-            return null;
-        }
-
-        if (group.isRecurring()) {
-            return null;
-        }
-
-        Date result = group.getDates().get(0);
-        return result.toInstant();
     }
 }

@@ -82,26 +82,4 @@ public class RenderUtil {
             throw new TemplateParseException("URL is malformed");
         }
     }
-
-    public Instant parseDate(String input) {
-        Parser parser = new Parser(TimeZone.getTimeZone("GMT"));
-        List<DateGroup> groups = parser.parse(input);
-
-        if (groups.size() != 1) {
-            return null;
-        }
-
-        DateGroup group = groups.get(0);
-
-        if (group.getDates().size() != 1) {
-            return null;
-        }
-
-        if (group.isRecurring()) {
-            return null;
-        }
-
-        Date result = group.getDates().get(0);
-        return result.toInstant();
-    }
 }
