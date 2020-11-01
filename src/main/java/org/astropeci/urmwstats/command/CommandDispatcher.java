@@ -2,7 +2,6 @@ package org.astropeci.urmwstats.command;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.astropeci.urmwstats.SecretProvider;
@@ -12,10 +11,13 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -28,6 +30,10 @@ public class CommandDispatcher extends ListenerAdapter {
 
     private static final String PRODUCTION_PREFIX = "prod%";
     private static final String TESTING_PREFIX = "dev%";
+
+    private static final Pattern COMMAND_PART_PATTERN = Pattern.compile(
+            "```(.|\\r|\\n)*```|`[^`\\r\\n]+`|\"[^\"\\r\\n]+\"|\\S+"
+    );
 
     private final List<Command> commands;
     private final TaskExecutor executor;
@@ -125,7 +131,24 @@ public class CommandDispatcher extends ListenerAdapter {
             return;
         }
 
-        List<String> commandParts = List.of(message.split("\\s+"));
+        List<String> commandParts = new ArrayList<>();
+        Matcher commandPartMatcher = COMMAND_PART_PATTERN.matcher(message);
+        while (commandPartMatcher.find()) {
+            String part = commandPartMatcher.group(0);
+
+            if (part.length() > 1 && part.startsWith("\"") && part.endsWith("\"")) {
+                part = part.substring(1, part.length() - 1);
+            }
+
+            if (part.isBlank()) {
+                log.info("Rejecting command with blank argument");
+                event.getChannel().sendMessage("❌ Commands cannot have blank arguments").queue();
+                event.getMessage().addReaction(FAILURE_EMOJI).queue();
+                return;
+            }
+
+            commandParts.add(part);
+        }
 
         log.info("Command started in #{} by {}: {}", event.getChannel().getName(), event.getAuthor().getName(), message);
 

@@ -3,7 +3,6 @@ package org.astropeci.urmwstats.api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Headers;
-import okhttp3.internal.http2.Header;
 import org.astropeci.urmwstats.DoggoProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
