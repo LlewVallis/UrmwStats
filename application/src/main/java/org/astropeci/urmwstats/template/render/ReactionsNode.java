@@ -21,7 +21,7 @@ public class ReactionsNode implements RenderNode {
             if (node instanceof ReactionNode) {
                 reactions.add((ReactionNode) node);
             } else {
-                throw new TemplateCompileException("\"" + node.name() + "\" is not valid inside reactions");
+                throw new TemplateCompileException("\"" + node.name() + "\" is not valid inside reaction sets");
             }
         }
 

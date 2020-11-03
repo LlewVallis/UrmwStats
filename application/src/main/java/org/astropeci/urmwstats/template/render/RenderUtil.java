@@ -86,6 +86,10 @@ public class RenderUtil {
                 case "value": return new FieldValueNode(element);
                 case "reactions": return new ReactionsNode(element);
                 case "reaction": return new ReactionNode(element);
+                case "time": return new TimeNode(element);
+                case "countdown": return new CountdownNode(element);
+                case "until": return new UntilNode(element);
+                case "replacement": return new ReplacementNode(element);
             }
         }
 

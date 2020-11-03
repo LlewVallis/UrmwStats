@@ -7,7 +7,7 @@ import org.w3c.dom.Element;
 public class ReactionNode extends AbstractTextContainerNode {
 
     public ReactionNode(Element element) {
-        super(element, "reaction");
+        super(element, "reaction node");
     }
 
     public String renderReaction(RenderContext ctx) {

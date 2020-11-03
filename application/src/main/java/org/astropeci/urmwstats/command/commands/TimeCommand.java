@@ -1,7 +1,7 @@
 package org.astropeci.urmwstats.command.commands;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.astropeci.urmwstats.TimeUtils;
+import org.astropeci.urmwstats.TimeUtil;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandException;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -45,14 +44,14 @@ public class TimeCommand implements Command {
 
     @Override
     public void execute(List<String> arguments, MessageReceivedEvent event) {
-        Instant now = Instant.now();
+        Instant now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
 
         Instant time;
         if (arguments.size() == 0) {
             time = now;
         } else {
             String input = String.join(" ", arguments);
-            time = TimeUtils.parseDate(input, now);
+            time = TimeUtil.parseDate(input, now);
         }
 
         if (time == null) {
@@ -60,12 +59,6 @@ public class TimeCommand implements Command {
         }
 
         Duration duration = Duration.between(now, time).abs();
-        if (duration.toSecondsPart() >= 30) {
-            duration = duration.plusMinutes(1);
-        }
-
-        duration.truncatedTo(ChronoUnit.MINUTES);
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm 'UTC' MMM d");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
@@ -75,31 +68,11 @@ public class TimeCommand implements Command {
                     dateFormat.format(Date.from(time))
             ).queue();
         } else {
-            List<String> durationSegments = new ArrayList<>();
-
-            if (duration.toDaysPart() > 0) {
-                durationSegments.add(duration.toDaysPart() + " day(s)");
-            }
-
-            if (duration.toHoursPart() > 0) {
-                durationSegments.add(duration.toHoursPart() + " hour(s)");
-            }
-
-            if (duration.toMinutesPart() > 0) {
-                durationSegments.add(duration.toMinutesPart() + " minute(s)");
-            }
-
-            StringBuilder durationString = new StringBuilder();
-            for (int i = 0; i < durationSegments.size(); i++) {
-                String prefix = i == 0 ? "" : i == durationSegments.size() - 1 ? " and " : ", ";
-                durationString.append(prefix).append(durationSegments.get(i));
-            }
-
             event.getChannel().sendMessageFormat(
                     "🕑 %s %s %s%s",
                     dateFormat.format(Date.from(time)),
                     now.isBefore(time) ? "is in" : "was",
-                    durationString,
+                    TimeUtil.durationString(duration),
                     now.isBefore(time) ? "" : " ago"
             ).queue();
         }

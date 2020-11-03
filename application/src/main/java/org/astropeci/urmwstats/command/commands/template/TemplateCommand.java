@@ -18,6 +18,8 @@ import org.astropeci.urmwstats.template.Template;
 import org.astropeci.urmwstats.template.TemplateRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -134,7 +136,7 @@ public class TemplateCommand implements Command {
             return;
         }
 
-        RenderContext context = new RenderContext(variables);
+        RenderContext context = new RenderContext(variables, Instant.now().truncatedTo(ChronoUnit.SECONDS));
         RichMessage message = template.render(context);
         target.send(message, event);
     }
