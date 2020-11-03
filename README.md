@@ -4,7 +4,8 @@ A site dedicated to tracking statistics from ranked Missile Wars matches and tou
 
 ## To develop the frontend of the site
 
-1. Navigate to `src/main/frontend`.
-2. Replace all occurences of `http://localhost:8080` with `http://168.119.54.244` in `config-overrides.js`.
-3. Run `npm start`.
-4. Profit.
+1. Navigate to `appliaction/src/main/frontend`.
+2. Replace all occurrences of `http://localhost:8080` with `https://urmw.live` in `config-overrides.js`.
+3. Run `npm install`.
+4. Run `npm start`.
+5. Profit.
