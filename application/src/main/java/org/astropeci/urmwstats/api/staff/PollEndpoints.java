@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.astropeci.urmwstats.Announcer;
 import org.astropeci.urmwstats.auth.RoleManager;
-import org.astropeci.urmwstats.data.Poll;
-import org.astropeci.urmwstats.data.PollRepository;
+import org.astropeci.urmwstats.poll.Poll;
+import org.astropeci.urmwstats.poll.PollRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -34,7 +34,7 @@ public class PollEndpoints {
     @GetMapping("/polls")
     public List<Poll> polls(@AuthenticationPrincipal OAuth2User principal) {
         roleManager.authenticate(principal);
-        return pollRepository.getPollsAlphabetically();
+        return pollRepository.fetchPollsAlphabetically();
     }
 
     @Data

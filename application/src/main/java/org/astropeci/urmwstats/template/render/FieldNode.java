@@ -1,7 +1,8 @@
 package org.astropeci.urmwstats.template.render;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.astropeci.urmwstats.template.TemplateParseException;
+import org.astropeci.urmwstats.template.RenderContext;
+import org.astropeci.urmwstats.template.TemplateCompileException;
 import org.astropeci.urmwstats.template.TemplateRenderException;
 import org.w3c.dom.Element;
 
@@ -18,7 +19,7 @@ public class FieldNode implements RenderNode {
         for (RenderNode node : RenderUtil.parsedChildrenWithoutWhitespace(element)) {
             if (node instanceof FieldNameNode) {
                 if (name != null) {
-                    throw new TemplateParseException("embed fields can only have one name");
+                    throw new TemplateCompileException("embed fields can only have one name");
                 }
 
                 name = (FieldNameNode) node;
@@ -26,7 +27,7 @@ public class FieldNode implements RenderNode {
 
             if (node instanceof FieldValueNode) {
                 if (value != null) {
-                    throw new TemplateParseException("embed fields can only have one value");
+                    throw new TemplateCompileException("embed fields can only have one value");
                 }
 
                 value = (FieldValueNode) node;
@@ -38,15 +39,15 @@ public class FieldNode implements RenderNode {
         this.inline = inline;
     }
 
-    public MessageEmbed.Field renderField() {
+    public MessageEmbed.Field renderField(RenderContext ctx) {
         String name = "";
         if (this.name != null) {
-            name = this.name.renderContents();
+            name = this.name.renderContents(ctx);
         }
 
         String value = "";
         if (this.value != null) {
-            value = this.value.renderContents();
+            value = this.value.renderContents(ctx);
         }
 
         if (name.length() > MessageEmbed.TITLE_MAX_LENGTH) {

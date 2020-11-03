@@ -21,7 +21,7 @@ public class PlayerEndpoints {
 
     @GetMapping("/players")
     public List<Player> players() {
-        return playerRepository.getPlayersByRanking();
+        return playerRepository.byRanking();
     }
 
     @GetMapping("/renames")

@@ -13,7 +13,7 @@ public class PlayerRepository {
 
     private volatile List<Player> players = new ArrayList<>();
 
-    public List<Player> getPlayersByRanking() {
+    public List<Player> byRanking() {
         @Cleanup("unlock") Lock lock = RepositoryCoordinator.LOCK.readLock();
         lock.lock();
 

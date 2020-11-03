@@ -8,7 +8,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import org.astropeci.urmwstats.data.Poll;
+import org.astropeci.urmwstats.poll.Poll;
+import org.astropeci.urmwstats.template.SavedTemplate;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -39,6 +40,9 @@ public class DatabaseProvider {
 
         MongoCollection<Poll> polls = db.getCollection("polls", Poll.class);
         polls.createIndex(Indexes.ascending("name"), new IndexOptions().name("name").unique(true));
+
+        MongoCollection<SavedTemplate> templates = db.getCollection("templates", SavedTemplate.class);
+        templates.createIndex(Indexes.ascending("name"), new IndexOptions().name("name").unique(true));
 
         return db;
     }

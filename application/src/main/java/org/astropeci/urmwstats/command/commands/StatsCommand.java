@@ -63,12 +63,13 @@ public class StatsCommand implements Command {
     }
 
     private void executePlayerStats(String fuzzyPlayerName, MessageReceivedEvent event) {
-        Player player = CommandUtil.matchPlayer(playerRepository, fuzzyPlayerName).orElseThrow(() ->
-                new CommandException(String.format(
-                        "🔍 Could not find `%s`, try refining your search",
-                        fuzzyPlayerName
-                ))
-        );
+        Player player = CommandUtil.matchPlayer(playerRepository, fuzzyPlayerName);
+        if (player == null) {
+            throw new CommandException(String.format(
+                    "🔍 Could not find `%s`, try refining your search",
+                    fuzzyPlayerName
+            ));
+        }
 
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder()
                 .setTitle("📈 Statistics for " + player.getName(), "https://urmw.live/player/" + player.getName());
@@ -138,7 +139,7 @@ public class StatsCommand implements Command {
     }
 
     private void appendTopPlayers(EmbedBuilder embed) {
-        List<String> playerStrings = playerRepository.getPlayersByRanking().stream()
+        List<String> playerStrings = playerRepository.byRanking().stream()
                 .limit(3)
                 .map(player -> String.format(
                         "%s (%.0f, %.0f)",
@@ -166,7 +167,7 @@ public class StatsCommand implements Command {
     }
 
     private void appendTopTourneyWinners(EmbedBuilder embed) {
-        List<String> playerStrings = playerRepository.getPlayersByRanking().stream()
+        List<String> playerStrings = playerRepository.byRanking().stream()
                 .sorted(Comparator.comparingDouble(Player::getFractionalTourneyWins).reversed())
                 .limit(3)
                 .filter(player -> player.getFractionalTourneyWins() > 0)
@@ -183,7 +184,7 @@ public class StatsCommand implements Command {
     }
 
     private void appendLongestStreaks(EmbedBuilder embed) {
-        List<String> playerStrings = playerRepository.getPlayersByRanking().stream()
+        List<String> playerStrings = playerRepository.byRanking().stream()
                 .sorted(Comparator.comparingInt(Player::getStreak).reversed())
                 .limit(3)
                 .filter(player -> player.getStreak() > 1)
@@ -200,7 +201,7 @@ public class StatsCommand implements Command {
     }
 
     private void appendMostWins(EmbedBuilder embed) {
-        List<String> playerStrings = playerRepository.getPlayersByRanking().stream()
+        List<String> playerStrings = playerRepository.byRanking().stream()
                 .sorted(Comparator.comparingInt(Player::getWins).reversed())
                 .limit(3)
                 .filter(player -> player.getWins() > 0)
@@ -217,7 +218,7 @@ public class StatsCommand implements Command {
     }
 
     private void appendHighestWinRate(EmbedBuilder embed) {
-        List<String> playerStrings = playerRepository.getPlayersByRanking().stream()
+        List<String> playerStrings = playerRepository.byRanking().stream()
                 .filter(player -> player.getWins() + player.getLosses() >= 10)
                 .sorted(Comparator.comparingDouble(this::winRate).reversed())
                 .limit(3)

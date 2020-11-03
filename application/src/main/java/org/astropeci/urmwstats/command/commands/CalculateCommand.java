@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class CalculateCommand implements Command {
 
     private final PlayerRepository playerRepository;
-    private final RepositoryCoordinator repositoryCoordinator;
 
     @Value
     private static class PlayerId implements IPlayer {
@@ -158,12 +157,13 @@ public class CalculateCommand implements Command {
                 continue;
             }
 
-            Player player = CommandUtil.matchPlayer(playerRepository, fuzzyName).orElseThrow(() ->
-                    new CommandException(String.format(
-                            "🔍 Could not find `%s`, try refining your search",
-                            fuzzyName
-                    ))
-            );
+            Player player = CommandUtil.matchPlayer(playerRepository, fuzzyName);
+            if (player == null) {
+                throw new CommandException(String.format(
+                        "🔍 Could not find `%s`, try refining your search",
+                        fuzzyName
+                ));
+            }
 
             players.put(player.getName(), player);
         }

@@ -2,7 +2,7 @@ package org.astropeci.urmwstats.template.render;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.astropeci.urmwstats.template.TemplateParseException;
+import org.astropeci.urmwstats.template.RenderContext;
 import org.astropeci.urmwstats.template.TemplateRenderException;
 import org.w3c.dom.Element;
 
@@ -32,8 +32,8 @@ public class AuthorNode extends AbstractTextContainerNode {
         RenderUtil.validateUrl(iconUrl);
     }
 
-    public void renderAuthor(EmbedBuilder embed) {
-        String author = renderContents();
+    public void renderAuthor(EmbedBuilder embed, RenderContext ctx) {
+        String author = renderContents(ctx);
 
         if (author.length() > MessageEmbed.TITLE_MAX_LENGTH) {
             throw new TemplateRenderException("author name is too large");

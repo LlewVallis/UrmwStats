@@ -22,6 +22,8 @@ public class Template {
 
     @SneakyThrows({ IOException.class, ParserConfigurationException.class })
     public static Template compile(String source) {
+        source = "<message>" + source + "</message>";
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setCoalescing(true);
         factory.setIgnoringComments(true);
@@ -32,13 +34,13 @@ public class Template {
         try {
             document = builder.parse(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
         } catch (SAXException e) {
-            throw new TemplateParseException("malformed XML syntax");
+            throw new TemplateCompileException("malformed XML syntax");
         }
 
         return new Template(new MessageNode(document));
     }
 
-    public Message render() {
-        return messageNode.render();
+    public RichMessage render(RenderContext ctx) {
+        return messageNode.render(ctx);
     }
 }

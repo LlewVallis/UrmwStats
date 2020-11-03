@@ -1,24 +1,23 @@
 package org.astropeci.urmwstats.template.render;
 
-import com.joestelmach.natty.DateGroup;
-import com.joestelmach.natty.Parser;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.astropeci.urmwstats.template.TemplateParseException;
+import org.astropeci.urmwstats.template.RenderContext;
+import org.astropeci.urmwstats.template.TemplateCompileException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @UtilityClass
 public class RenderUtil {
+
+    private static final Pattern VARIABLE_TAG_NAME_PATTERN = Pattern.compile("var\\d+");
 
     public List<Node> children(Node parent) {
         List<Node> result = new ArrayList<>();
@@ -44,7 +43,7 @@ public class RenderUtil {
     }
 
     public boolean isWhitespace(RenderNode node) {
-        return node instanceof LiteralNode && ((LiteralNode) node).renderText().isBlank();
+        return node instanceof LiteralNode && ((LiteralNode) node).isBlank();
     }
 
     public RenderNode parse(Node node) {
@@ -54,8 +53,26 @@ public class RenderUtil {
 
         if (node instanceof Element) {
             Element element = (Element) node;
+            String tagName = element.getTagName();
 
-            switch (element.getTagName()) {
+            if (VARIABLE_TAG_NAME_PATTERN.matcher(tagName).matches()) {
+                String indexString = tagName.substring(3);
+
+                int index;
+                try {
+                    index = Integer.parseInt(indexString) - 1;
+                } catch (NumberFormatException e) {
+                    throw new TemplateCompileException("variable index too large");
+                }
+
+                if (index == -1) {
+                    throw new TemplateCompileException("variable indexes start at 1");
+                }
+
+                return new VariableNode(element, index);
+            }
+
+            switch (tagName) {
                 case "br": return new LinebreakNode(element);
                 case "code": return new CodeBlockNode(element);
                 case "embed": return new EmbedNode(element);
@@ -67,19 +84,25 @@ public class RenderUtil {
                 case "field": return new FieldNode(element, false);
                 case "name": return new FieldNameNode(element);
                 case "value": return new FieldValueNode(element);
+                case "reactions": return new ReactionsNode(element);
+                case "reaction": return new ReactionNode(element);
             }
         }
 
-        throw new TemplateParseException("\"" + node.getNodeName() + "\" is not recognised");
+        throw new TemplateCompileException("\"" + node.getNodeName() + "\" is not recognised");
     }
 
     public void validateUrl(String url) {
+        if (url.isEmpty()) {
+            return;
+        }
+
         if (url.length() > MessageEmbed.URL_MAX_LENGTH) {
-            throw new TemplateParseException("URL is too large");
+            throw new TemplateCompileException("URL is too large");
         }
 
         if (!EmbedBuilder.URL_PATTERN.matcher(url).matches()) {
-            throw new TemplateParseException("URL is malformed");
+            throw new TemplateCompileException("URL is malformed");
         }
     }
 }

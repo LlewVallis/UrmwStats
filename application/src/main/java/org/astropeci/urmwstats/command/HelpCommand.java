@@ -1,6 +1,11 @@
 package org.astropeci.urmwstats.command;
 
 import lombok.RequiredArgsConstructor;
+import me.xdrop.fuzzywuzzy.Applicable;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.ToStringFunction;
+import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
+import me.xdrop.fuzzywuzzy.ratios.SimpleRatio;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.auth.RoleManager;
@@ -47,37 +52,54 @@ class HelpCommand implements Command {
             CommandUtil.throwWrongNumberOfArguments();
         }
 
-        final String search;
-        if (arguments.size() >= 1) {
-            search = arguments.get(0);
-        } else {
-            search = "";
-        }
-
         boolean userIsStaff = roleManager.isAuthenticated(event.getAuthor().getId());
 
         List<Command> relevantCommands = commands.stream()
                 .filter(command -> command.helpPriority() >= 0)
                 .filter(command -> !command.isStaffOnly() || userIsStaff)
-                .filter(command -> containsIgnoreCase(command.label(), search))
                 .sorted(Comparator.comparingInt(Command::helpPriority).reversed())
                 .collect(Collectors.toList());
 
-        if (relevantCommands.size() == 0) {
-            throw new CommandException("🤷 No command matched that search");
-        }
+        EmbedBuilder embed = CommandUtil.coloredEmbedBuilder();
 
-        EmbedBuilder embed = CommandUtil.coloredEmbedBuilder().setTitle("📖 Command help");
+        if (arguments.size() == 1) {
+            String search = arguments.get(0);
 
-        for (Command command : relevantCommands) {
-            embed.addField(command.usage(), command.helpDescription(), true);
+            BoundExtractedResult<Command> searchResult = FuzzySearch.extractOne(
+                    search.toLowerCase(),
+                    relevantCommands,
+                    Command::label,
+                    new SimpleRatio()
+            );
+
+            if (searchResult.getScore() < 75) {
+                throw new CommandException(String.format(
+                        "🔍 Could not find `%s`, try refining your search",
+                        search
+                ));
+            }
+
+            Command command = searchResult.getReferent();
+
+            embed.setTitle("📖 Help for " + command.usage());
+            embed.setDescription(command.helpDescription());
+        } else {
+            embed.setTitle("📖 Command help");
+
+            for (Command command : relevantCommands) {
+                String description = truncateDescription(command.helpDescription());
+                embed.addField(command.usage(), description, true);
+            }
         }
 
         event.getChannel().sendMessage(embed.build()).queue();
     }
 
-    private boolean containsIgnoreCase(String haystack, String needle) {
-        Pattern regex = Pattern.compile(Pattern.quote(needle), Pattern.CASE_INSENSITIVE);
-        return regex.matcher(haystack).find();
+    private String truncateDescription(String description) {
+        if (description.length() > 60) {
+            return description.substring(0, 57) + "...";
+        } else {
+            return description;
+        }
     }
 }

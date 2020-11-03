@@ -60,7 +60,7 @@ public class InfoEndpoints {
 
         return new StandardData(
                 info(),
-                playerRepository.getPlayersByRanking(),
+                playerRepository.byRanking(),
                 lastTourney.get()
         );
     }

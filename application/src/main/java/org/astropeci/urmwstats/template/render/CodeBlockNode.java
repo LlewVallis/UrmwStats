@@ -1,5 +1,6 @@
 package org.astropeci.urmwstats.template.render;
 
+import org.astropeci.urmwstats.template.RenderContext;
 import org.w3c.dom.Element;
 
 public class CodeBlockNode extends AbstractTextContainerNode implements TextNode {
@@ -18,11 +19,11 @@ public class CodeBlockNode extends AbstractTextContainerNode implements TextNode
     }
 
     @Override
-    public String renderText() {
+    public String renderText(RenderContext ctx) {
         return String.format(
-                "```%s\n%s```",
+                "```%s\n%s\n```",
                 language == null ? "" : language,
-                renderContents()
+                renderContents(ctx)
         );
     }
 

@@ -2,7 +2,7 @@ package org.astropeci.urmwstats.template.render;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.astropeci.urmwstats.template.TemplateParseException;
+import org.astropeci.urmwstats.template.RenderContext;
 import org.astropeci.urmwstats.template.TemplateRenderException;
 import org.w3c.dom.Element;
 
@@ -23,8 +23,8 @@ public class TitleNode extends AbstractTextContainerNode {
         RenderUtil.validateUrl(url);
     }
 
-    public void renderTitle(EmbedBuilder embed) {
-        String title = renderContents();
+    public void renderTitle(EmbedBuilder embed, RenderContext ctx) {
+        String title = renderContents(ctx);
 
         if (title.length() > MessageEmbed.TITLE_MAX_LENGTH) {
             throw new TemplateRenderException("title is too large");

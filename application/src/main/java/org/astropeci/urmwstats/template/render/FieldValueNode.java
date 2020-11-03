@@ -1,5 +1,6 @@
 package org.astropeci.urmwstats.template.render;
 
+import org.astropeci.urmwstats.template.RenderContext;
 import org.w3c.dom.Element;
 
 public class FieldValueNode extends AbstractTextContainerNode {
@@ -9,8 +10,8 @@ public class FieldValueNode extends AbstractTextContainerNode {
     }
 
     @Override
-    public String renderContents() {
-        return super.renderContents();
+    public String renderContents(RenderContext ctx) {
+        return super.renderContents(ctx);
     }
 
     @Override

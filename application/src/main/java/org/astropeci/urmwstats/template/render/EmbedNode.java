@@ -4,7 +4,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.astropeci.urmwstats.TimeUtils;
 import org.astropeci.urmwstats.command.CommandUtil;
-import org.astropeci.urmwstats.template.TemplateParseException;
+import org.astropeci.urmwstats.template.RenderContext;
+import org.astropeci.urmwstats.template.TemplateCompileException;
 import org.astropeci.urmwstats.template.TemplateRenderException;
 import org.w3c.dom.Element;
 
@@ -34,36 +35,36 @@ public class EmbedNode implements RenderNode {
         for (RenderNode node : RenderUtil.parsedChildrenWithoutWhitespace(element)) {
             if (node instanceof FieldNode) {
                 if (fields.size() == 25) {
-                    throw new TemplateParseException("embeds can only have 25 fields");
+                    throw new TemplateCompileException("embeds can only have 25 fields");
                 }
 
                 fields.add((FieldNode) node);
             } else if (node instanceof AuthorNode) {
                 if (author != null) {
-                    throw new TemplateParseException("embeds can only have one author");
+                    throw new TemplateCompileException("embeds can only have one author");
                 }
 
                 author = (AuthorNode) node;
             } else if (node instanceof TitleNode) {
                 if (title != null) {
-                    throw new TemplateParseException("embeds can only have one title");
+                    throw new TemplateCompileException("embeds can only have one title");
                 }
 
                 title = (TitleNode) node;
             } else if (node instanceof DescriptionNode) {
                 if (description != null) {
-                    throw new TemplateParseException("embeds can only have one description");
+                    throw new TemplateCompileException("embeds can only have one description");
                 }
 
                 description = (DescriptionNode) node;
             } else if (node instanceof FooterNode) {
                 if (footer != null){
-                    throw new TemplateParseException("embeds can only have one footer");
+                    throw new TemplateCompileException("embeds can only have one footer");
                 }
 
                 footer = (FooterNode) node;
             } else {
-                throw new TemplateParseException("\"" + node.name() + "\" is not valid inside an embed");
+                throw new TemplateCompileException("\"" + node.name() + "\" is not valid inside an embed");
             }
         }
 
@@ -73,7 +74,7 @@ public class EmbedNode implements RenderNode {
         } else {
             this.timestamp = TimeUtils.parseDate(timestamp);
             if (this.timestamp == null) {
-                throw new TemplateParseException("could not decipher time \"" + timestamp + "\"");
+                throw new TemplateCompileException("could not decipher time \"" + timestamp + "\"");
             }
         }
 
@@ -84,7 +85,7 @@ public class EmbedNode implements RenderNode {
             try {
                 this.color = Color.decode(color);
             } catch (NumberFormatException e) {
-                throw new TemplateParseException("could not decipher hex color \"" + color + "\"");
+                throw new TemplateCompileException("could not decipher hex color \"" + color + "\"");
             }
         }
 
@@ -108,19 +109,19 @@ public class EmbedNode implements RenderNode {
         this.footer = footer;
     }
 
-    public MessageEmbed renderEmbed() {
+    public MessageEmbed renderEmbed(RenderContext ctx) {
         EmbedBuilder builder = CommandUtil.coloredEmbedBuilder();
 
-        if (author != null) author.renderAuthor(builder);
-        if (title != null) title.renderTitle(builder);
-        if (description != null) description.renderDescription(builder);
-        if (footer != null) footer.renderFooter(builder);
+        if (author != null) author.renderAuthor(builder, ctx);
+        if (title != null) title.renderTitle(builder, ctx);
+        if (description != null) description.renderDescription(builder, ctx);
+        if (footer != null) footer.renderFooter(builder, ctx);
         if (timestamp != null) builder.setTimestamp(timestamp);
         if (color != null) builder.setColor(color);
         if (iconUrl != null) builder.setThumbnail(iconUrl);
         if (imageUrl != null) builder.setImage(imageUrl);
 
-        fields.forEach(field -> builder.addField(field.renderField()));
+        fields.forEach(field -> builder.addField(field.renderField(ctx)));
 
         if (!builder.isValidLength()) {
             throw new TemplateRenderException("embed is too large");

@@ -1,34 +1,36 @@
-package org.astropeci.urmwstats.command.commands;
+package org.astropeci.urmwstats.command.commands.template;
 
-import net.dv8tion.jda.api.entities.Message;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandException;
 import org.astropeci.urmwstats.command.CommandUtil;
-import org.astropeci.urmwstats.template.Template;
-import org.astropeci.urmwstats.template.TemplateParseException;
-import org.astropeci.urmwstats.template.TemplateRenderException;
+import org.astropeci.urmwstats.template.TemplateCompileException;
+import org.astropeci.urmwstats.template.TemplateRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
 @Component
-public class PostTemplateCommand implements Command {
+@RequiredArgsConstructor
+public class SaveTemplateCommand implements Command {
+
+    private final TemplateRepository templateRepository;
 
     @Override
     public String label() {
-        return "post-template";
+        return "save-template";
     }
 
     @Override
     public String usage() {
-        return "post-template <code-block>";
+        return "save-template <name>\u00A0<code-block>";
     }
 
     @Override
     public String helpDescription() {
-        return "Compiles, renders and posts a template to the current channel";
+        return "Compiles and saves a template or edits an existing one";
     }
 
     @Override
@@ -43,11 +45,12 @@ public class PostTemplateCommand implements Command {
 
     @Override
     public void execute(List<String> arguments, MessageReceivedEvent event) {
-        if (arguments.size() == 0) {
+        if (arguments.size() != 2) {
             CommandUtil.throwWrongNumberOfArguments();
         }
 
-        String source = String.join(" ", arguments);
+        String name = CommandUtil.templateName(arguments.get(0));
+        String source = arguments.get(1);
 
         if (!source.startsWith("```") || !source.endsWith("```") || source.length() < 6) {
             throw new CommandException("❌ The template must be wrapped in a code block");
@@ -58,22 +61,12 @@ public class PostTemplateCommand implements Command {
             source = source.substring(3);
         }
 
-        source = "<message>" + source + "</message>";
-
-        Template template;
         try {
-            template = Template.compile(source);
-        } catch (TemplateParseException e) {
+            templateRepository.save(name, source);
+        } catch (TemplateCompileException e) {
             throw new CommandException("❌ Compilation error ```" + e.getMessage() + "```");
         }
 
-        Message message;
-        try {
-            message = template.render();
-        } catch (TemplateRenderException e) {
-            throw new CommandException("❌ Rendering error ```" + e.getMessage() + "```");
-        }
-
-        event.getChannel().sendMessage(message).queue();
+        event.getChannel().sendMessage("💾 Compiled and saved `" + name + "`").queue();
     }
 }

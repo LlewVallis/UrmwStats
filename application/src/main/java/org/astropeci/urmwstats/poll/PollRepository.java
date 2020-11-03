@@ -1,4 +1,4 @@
-package org.astropeci.urmwstats.data;
+package org.astropeci.urmwstats.poll;
 
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
@@ -27,7 +27,7 @@ public class PollRepository {
     public static class MalformedVoteException extends RuntimeException { }
 
     @Synchronized
-    public List<Poll> getPollsAlphabetically() {
+    public List<Poll> fetchPollsAlphabetically() {
         MongoCollection<Poll> collection = db.getCollection("polls", Poll.class);
         return collection.find().sort(Sorts.ascending("name")).into(new ArrayList<>());
     }

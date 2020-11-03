@@ -1,4 +1,4 @@
-package org.astropeci.urmwstats.data;
+package org.astropeci.urmwstats.poll;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
