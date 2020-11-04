@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.astropeci.urmwstats.SecretProvider;
 import org.astropeci.urmwstats.auth.RoleManager;
+import org.astropeci.urmwstats.metrics.Metrics;
+import org.astropeci.urmwstats.metrics.MetricsStore;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +40,7 @@ public class CommandDispatcher extends ListenerAdapter {
 
     private final List<Command> commands;
     private final RoleManager roleManager;
+    private final MetricsStore metricsStore;
 
     private final Set<String> prefixes;
     private final String testingGuildId;
@@ -48,10 +51,12 @@ public class CommandDispatcher extends ListenerAdapter {
             JDA jda,
             SecretProvider secretProvider,
             RoleManager roleManager,
+            MetricsStore metricsStore,
             Environment environment
     ) {
         this.commands = commands;
         this.roleManager = roleManager;
+        this.metricsStore = metricsStore;
 
         jda.addEventListener(this);
 
@@ -177,6 +182,7 @@ public class CommandDispatcher extends ListenerAdapter {
 
     private void handle(Command command, List<String> commandParts, MessageReceivedEvent event) {
         log.debug("Dispatching command {}", command.getClass().getSimpleName());
+        metricsStore.commandRun();
 
         if (command.isStaffOnly() && !roleManager.isAuthenticated(event.getAuthor().getId())) {
             log.info("Denying command from {} since they are not staff", event.getAuthor().getName());

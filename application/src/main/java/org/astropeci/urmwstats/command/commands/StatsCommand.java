@@ -117,7 +117,7 @@ public class StatsCommand implements Command {
 
     private void executeGlobalStats(MessageReceivedEvent event) {
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder()
-                .setTitle("📊 Season statistics", "https://urmw.live");
+                .setTitle("📈 Season statistics", "https://urmw.live");
 
         appendLastTourneyPlacings(embed);
         appendTopPlayers(embed);

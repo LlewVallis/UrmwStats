@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.DoggoProvider;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandUtil;
+import org.astropeci.urmwstats.metrics.MetricsStore;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 public class DoggoCommand implements Command {
 
     private final DoggoProvider doggoProvider;
+    private final MetricsStore metricsStore;
 
     @Override
     public String label() {
@@ -47,5 +50,6 @@ public class DoggoCommand implements Command {
         }
 
         event.getChannel().sendFile(doggoProvider.randomDoggo(), "doggo.jpg").complete();
+        metricsStore.doggoProvided();
     }
 }
