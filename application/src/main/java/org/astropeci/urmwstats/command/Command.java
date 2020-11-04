@@ -12,7 +12,7 @@ public interface Command {
 
     String helpDescription();
 
-    int helpPriority();
+    HelpSection section();
 
     boolean isStaffOnly();
 

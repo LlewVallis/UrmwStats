@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.TimeUtil;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandException;
+import org.astropeci.urmwstats.command.HelpSection;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -33,8 +34,8 @@ public class TimeCommand implements Command {
     }
 
     @Override
-    public int helpPriority() {
-        return 4;
+    public HelpSection section() {
+        return HelpSection.UTILITY;
     }
 
     @Override

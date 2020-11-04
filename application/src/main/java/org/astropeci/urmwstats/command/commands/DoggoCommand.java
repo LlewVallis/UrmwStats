@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.DoggoProvider;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandUtil;
+import org.astropeci.urmwstats.command.HelpSection;
 import org.astropeci.urmwstats.metrics.MetricsStore;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
@@ -34,8 +35,8 @@ public class DoggoCommand implements Command {
     }
 
     @Override
-    public int helpPriority() {
-        return 3;
+    public HelpSection section() {
+        return HelpSection.GLOBAL;
     }
 
     @Override

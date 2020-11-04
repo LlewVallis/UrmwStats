@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandException;
 import org.astropeci.urmwstats.command.CommandUtil;
+import org.astropeci.urmwstats.command.HelpSection;
 import org.astropeci.urmwstats.template.TemplateCompileException;
 import org.astropeci.urmwstats.template.TemplateRepository;
 import org.springframework.stereotype.Component;
@@ -34,8 +35,8 @@ public class SaveTemplateCommand implements Command {
     }
 
     @Override
-    public int helpPriority() {
-        return 2;
+    public HelpSection section() {
+        return HelpSection.TEMPLATE;
     }
 
     @Override

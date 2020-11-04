@@ -37,8 +37,8 @@ class HelpCommand implements Command {
     }
 
     @Override
-    public int helpPriority() {
-        return 0;
+    public HelpSection section() {
+        return HelpSection.MISC;
     }
 
     @Override
@@ -55,9 +55,14 @@ class HelpCommand implements Command {
         boolean userIsStaff = roleManager.isAuthenticated(event.getAuthor().getId());
 
         List<Command> relevantCommands = commands.stream()
-                .filter(command -> command.helpPriority() >= 0)
+                .filter(command -> command.section() != null)
                 .filter(command -> !command.isStaffOnly() || userIsStaff)
-                .sorted(Comparator.comparingInt(Command::helpPriority).reversed())
+                .sorted(Comparator.comparingInt(
+                        (Command command) -> command.helpDescription().length()
+                ).reversed())
+                .sorted(Comparator.comparingInt(
+                        (Command command) -> command.section().ordinal()
+                ))
                 .collect(Collectors.toList());
 
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder();
@@ -86,7 +91,14 @@ class HelpCommand implements Command {
         } else {
             embed.setTitle("📖 Command help");
 
+            HelpSection previousSection = HelpSection.GLOBAL;
             for (Command command : relevantCommands) {
+                HelpSection newSection = command.section();
+                if (newSection != previousSection) {
+                    embed.addField("", "__**" + newSection.getTitle() + "**__", false);
+                    previousSection = newSection;
+                }
+
                 String description = truncateDescription(command.helpDescription());
                 embed.addField(command.usage(), description, true);
             }

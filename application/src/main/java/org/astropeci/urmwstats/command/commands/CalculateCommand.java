@@ -9,6 +9,7 @@ import org.astropeci.urmwstats.TrueskillSettings;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandException;
 import org.astropeci.urmwstats.command.CommandUtil;
+import org.astropeci.urmwstats.command.HelpSection;
 import org.astropeci.urmwstats.data.Player;
 import org.astropeci.urmwstats.data.PlayerRepository;
 import org.astropeci.urmwstats.data.RepositoryCoordinator;
@@ -50,8 +51,8 @@ public class CalculateCommand implements Command {
     }
 
     @Override
-    public int helpPriority() {
-        return 4;
+    public HelpSection section() {
+        return HelpSection.GLOBAL;
     }
 
     @Override

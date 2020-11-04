@@ -3,6 +3,7 @@ package org.astropeci.urmwstats.command.commands;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandUtil;
+import org.astropeci.urmwstats.command.HelpSection;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,8 +27,8 @@ public class CrashCommand implements Command {
     }
 
     @Override
-    public int helpPriority() {
-        return 0;
+    public HelpSection section() {
+        return HelpSection.MISC;
     }
 
     @Override

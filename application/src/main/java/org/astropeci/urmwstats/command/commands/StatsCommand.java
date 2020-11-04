@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandException;
 import org.astropeci.urmwstats.command.CommandUtil;
+import org.astropeci.urmwstats.command.HelpSection;
 import org.astropeci.urmwstats.data.*;
 import org.springframework.stereotype.Component;
 
@@ -40,8 +41,8 @@ public class StatsCommand implements Command {
     }
 
     @Override
-    public int helpPriority() {
-        return 4;
+    public HelpSection section() {
+        return HelpSection.GLOBAL;
     }
 
     @Override

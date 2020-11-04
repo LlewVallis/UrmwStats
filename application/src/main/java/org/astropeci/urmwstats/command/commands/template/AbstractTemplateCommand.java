@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandException;
 import org.astropeci.urmwstats.command.CommandUtil;
+import org.astropeci.urmwstats.command.HelpSection;
 import org.astropeci.urmwstats.template.*;
 
 import java.time.Instant;
@@ -86,8 +87,8 @@ public abstract class AbstractTemplateCommand implements Command {
     }
 
     @Override
-    public int helpPriority() {
-        return 2;
+    public HelpSection section() {
+        return HelpSection.TEMPLATE;
     }
 
     @Override
