@@ -15,6 +15,7 @@ public class TimeNode extends AbstractTimeContainerNode implements TextNode {
 
     @Override
     public String renderText(RenderContext ctx) {
+        ctx.setTimeDependent();
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm 'UTC' MMM d");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(Date.from(renderTime(ctx)));

@@ -73,7 +73,7 @@ public class TemplateRepository {
     }
 
     public String getSource(String name) {
-        @Cleanup("unlock") Lock lock = this.lock.writeLock();
+        @Cleanup("unlock") Lock lock = this.lock.readLock();
         lock.lock();
 
         MongoCollection<SavedTemplate> collection = db.getCollection("templates", SavedTemplate.class);

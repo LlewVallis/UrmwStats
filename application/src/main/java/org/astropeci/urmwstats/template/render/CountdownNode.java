@@ -70,6 +70,9 @@ public class CountdownNode implements TextNode {
         if (duration.toMinutes() < 1) {
             return replacement.renderContents(ctx);
         } else {
+            ctx.setTimeDependent();
+            ctx.setUsingCountdowns();
+
             StringBuilder result = new StringBuilder();
 
             for (TextNode node : before) {

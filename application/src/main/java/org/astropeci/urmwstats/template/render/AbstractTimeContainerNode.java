@@ -14,7 +14,7 @@ public abstract class AbstractTimeContainerNode extends AbstractTextContainerNod
 
     public Instant renderTime(RenderContext ctx) {
         String content = renderContents(ctx);
-        Instant time = TimeUtil.parseDate(content, ctx.getNow());
+        Instant time = TimeUtil.parseDate(content, ctx.getBaselineTime());
         if (time == null) {
             time = ctx.getNow();
         }

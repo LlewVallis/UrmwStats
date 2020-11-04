@@ -54,7 +54,7 @@ public class ListTemplatesCommand implements Command {
         } else {
             StringBuilder builder = new StringBuilder("📑 Templates:");
 
-            templateRepository.all().forEach((name, template) -> {
+            templates.forEach((name, template) -> {
                 builder.append("\n        • `").append(name).append("`");
             });
 

@@ -1,13 +1,28 @@
 package org.astropeci.urmwstats.template;
 
-import lombok.Value;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 import java.util.List;
 
-@Value
+@Getter
+@RequiredArgsConstructor
 public class RenderContext {
 
-    List<String> variables;
-    Instant now;
+    private final List<String> variables;
+
+    private final Instant baselineTime;
+    private final Instant now;
+
+    private boolean timeDependent;
+    private boolean usingCountdowns;
+
+    public void setTimeDependent() {
+        timeDependent = true;
+    }
+
+    public void setUsingCountdowns() {
+        usingCountdowns = true;
+    }
 }

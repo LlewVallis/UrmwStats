@@ -44,7 +44,7 @@ public class TimeCommand implements Command {
 
     @Override
     public void execute(List<String> arguments, MessageReceivedEvent event) {
-        Instant now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Instant now = Instant.now().truncatedTo(ChronoUnit.MINUTES);
 
         Instant time;
         if (arguments.size() == 0) {

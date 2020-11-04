@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.astropeci.urmwstats.SecretProvider;
 import org.astropeci.urmwstats.auth.RoleManager;
 import org.springframework.core.env.Environment;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +15,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -36,7 +37,6 @@ public class CommandDispatcher extends ListenerAdapter {
     );
 
     private final List<Command> commands;
-    private final TaskExecutor executor;
     private final RoleManager roleManager;
 
     private final Set<String> prefixes;
@@ -45,14 +45,12 @@ public class CommandDispatcher extends ListenerAdapter {
 
     public CommandDispatcher(
             List<Command> commands,
-            TaskExecutor executor,
             JDA jda,
             SecretProvider secretProvider,
             RoleManager roleManager,
             Environment environment
     ) {
         this.commands = commands;
-        this.executor = executor;
         this.roleManager = roleManager;
 
         jda.addEventListener(this);
@@ -96,7 +94,7 @@ public class CommandDispatcher extends ListenerAdapter {
             return;
         }
 
-        executor.execute(() -> dispatch(message, prefix, event));
+        CompletableFuture.runAsync(() -> dispatch(message, prefix, event));
     }
 
     private boolean shouldRun(String prefix, MessageReceivedEvent event) {

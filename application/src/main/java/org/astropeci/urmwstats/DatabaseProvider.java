@@ -9,6 +9,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import org.astropeci.urmwstats.poll.Poll;
+import org.astropeci.urmwstats.template.LiveTemplateTracker;
 import org.astropeci.urmwstats.template.SavedTemplate;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -43,6 +44,9 @@ public class DatabaseProvider {
 
         MongoCollection<SavedTemplate> templates = db.getCollection("templates", SavedTemplate.class);
         templates.createIndex(Indexes.ascending("name"), new IndexOptions().name("name").unique(true));
+
+        MongoCollection<LiveTemplateTracker> liveTemplates = db.getCollection("liveTemplates", LiveTemplateTracker.class);
+        liveTemplates.createIndex(Indexes.ascending("messageId"), new IndexOptions().name("messageId").unique(true));
 
         return db;
     }
