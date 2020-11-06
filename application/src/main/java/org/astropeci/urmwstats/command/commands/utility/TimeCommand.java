@@ -1,4 +1,4 @@
-package org.astropeci.urmwstats.command.commands;
+package org.astropeci.urmwstats.command.commands.utility;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.TimeUtil;

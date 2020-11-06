@@ -8,6 +8,7 @@ public enum HelpSection {
 
     GLOBAL(null),
     UTILITY("Utility commands"),
+    RECORDING("Recording commands"),
     TEMPLATE("Template commands"),
     MISC("Miscellaneous commands");
 

@@ -1,47 +1,46 @@
-package org.astropeci.urmwstats.command.commands;
+package org.astropeci.urmwstats.command.commands.recording;
 
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.astropeci.urmwstats.DoggoProvider;
 import org.astropeci.urmwstats.command.Command;
+import org.astropeci.urmwstats.command.CommandException;
 import org.astropeci.urmwstats.command.CommandUtil;
 import org.astropeci.urmwstats.command.HelpSection;
-import org.astropeci.urmwstats.metrics.MetricsStore;
-import org.springframework.beans.factory.DisposableBean;
+import org.astropeci.urmwstats.recording.NotRecordingException;
+import org.astropeci.urmwstats.recording.RecordingController;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class DoggoCommand implements Command {
+public class DiscardRecordingCommand implements Command {
 
-    private final DoggoProvider doggoProvider;
-    private final MetricsStore metricsStore;
+    private final RecordingController recordingController;
 
     @Override
     public String label() {
-        return "doggo";
+        return "discard-recording";
     }
 
     @Override
     public String usage() {
-        return "doggo";
+        return "discard-recording";
     }
 
     @Override
     public String helpDescription() {
-        return "Presents you with a 🌶️ doggo";
+        return "Stop recording and discard the recorded audio";
     }
 
     @Override
     public HelpSection section() {
-        return HelpSection.GLOBAL;
+        return HelpSection.RECORDING;
     }
 
     @Override
     public boolean isStaffOnly() {
-        return false;
+        return true;
     }
 
     @Override
@@ -50,7 +49,10 @@ public class DoggoCommand implements Command {
             CommandUtil.throwWrongNumberOfArguments();
         }
 
-        event.getChannel().sendFile(doggoProvider.randomDoggo(), "doggo.jpg").complete();
-        metricsStore.doggoProvided();
+        try {
+            recordingController.discard(event);
+        } catch (NotRecordingException e) {
+            throw new CommandException("❌ Not currently recording");
+        }
     }
 }

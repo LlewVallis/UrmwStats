@@ -1,4 +1,4 @@
-package org.astropeci.urmwstats.command.commands;
+package org.astropeci.urmwstats.command.commands.global;
 
 import de.gesundkrank.jskills.*;
 import lombok.RequiredArgsConstructor;

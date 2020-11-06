@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,8 +24,11 @@ public class JdaProvider {
         JDA jda = JDABuilder.createLight(
                 secretProvider.getDiscordBotToken(),
                 GatewayIntent.GUILD_MESSAGES,
-                GatewayIntent.DIRECT_MESSAGES
-        ).build();
+                GatewayIntent.DIRECT_MESSAGES,
+                GatewayIntent.GUILD_VOICE_STATES
+        ).enableCache(
+                CacheFlag.VOICE_STATE
+        ).setMemberCachePolicy(MemberCachePolicy.VOICE).build();
 
         jda.getPresence().setActivity(Activity.playing("%help"));
         jda.awaitReady();

@@ -1,5 +1,6 @@
-package org.astropeci.urmwstats.command.commands;
+package org.astropeci.urmwstats.command.commands.misc;
 
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandUtil;
@@ -8,27 +9,28 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
-public class CrashCommand implements Command {
+public class CrashConfirmCommand implements Command {
 
     @Override
     public String label() {
-        return "crash-immediately";
+        return "crash-immediately-i-know-what-i-am-doing";
     }
 
     @Override
     public String usage() {
-        return "crash-immediately";
+        return "";
     }
 
     @Override
     public String helpDescription() {
-        return "Instantly crash the entire URMW Stats service";
+        return "";
     }
 
     @Override
     public HelpSection section() {
-        return HelpSection.MISC;
+        return null;
     }
 
     @Override
@@ -42,11 +44,9 @@ public class CrashCommand implements Command {
             CommandUtil.throwWrongNumberOfArguments();
         }
 
-        event.getChannel().sendMessage(
-                "⚠️ **Are you sure?**\n" +
-                        "This will instantly crash the entire URMW Stats service, including the website and bot.\n" +
-                        "The service will **not** automatically restart after doing this.\n" +
-                        "To continue, run `%crash-immediately-i-know-what-i-am-doing`"
-        ).queue();
+        log.error("{} ({}) is crashing the service!", event.getAuthor().getName(), event.getAuthor().getName());
+
+        event.getChannel().sendMessage("🔥 Crashing the service <@305992421118967821>").complete();
+        System.exit(1);
     }
 }
