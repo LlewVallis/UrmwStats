@@ -12,7 +12,6 @@ import org.astropeci.urmwstats.command.CommandUtil;
 import org.astropeci.urmwstats.command.HelpSection;
 import org.astropeci.urmwstats.data.Player;
 import org.astropeci.urmwstats.data.PlayerRepository;
-import org.astropeci.urmwstats.data.RepositoryCoordinator;
 import org.astropeci.urmwstats.data.Skill;
 import org.springframework.stereotype.Component;
 

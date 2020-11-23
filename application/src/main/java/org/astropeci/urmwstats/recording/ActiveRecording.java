@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.managers.AudioManager;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class ActiveRecording implements AudioReceiveHandler, ConnectionListener, AutoCloseable {

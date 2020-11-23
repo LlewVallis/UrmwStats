@@ -25,7 +25,8 @@ public class JdaProvider {
                 secretProvider.getDiscordBotToken(),
                 GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.DIRECT_MESSAGES,
-                GatewayIntent.GUILD_VOICE_STATES
+                GatewayIntent.GUILD_VOICE_STATES,
+                GatewayIntent.GUILD_MESSAGE_REACTIONS
         ).enableCache(
                 CacheFlag.VOICE_STATE
         ).setMemberCachePolicy(MemberCachePolicy.VOICE).build();

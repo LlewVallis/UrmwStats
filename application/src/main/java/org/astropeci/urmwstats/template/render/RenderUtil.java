@@ -3,7 +3,6 @@ package org.astropeci.urmwstats.template.render;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.astropeci.urmwstats.template.RenderContext;
 import org.astropeci.urmwstats.template.TemplateCompileException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

@@ -7,7 +7,6 @@ import org.astropeci.urmwstats.command.Command;
 import org.astropeci.urmwstats.command.CommandUtil;
 import org.astropeci.urmwstats.command.HelpSection;
 import org.astropeci.urmwstats.metrics.MetricsStore;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

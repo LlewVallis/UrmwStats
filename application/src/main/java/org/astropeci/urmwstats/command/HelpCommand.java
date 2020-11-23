@@ -1,9 +1,7 @@
 package org.astropeci.urmwstats.command;
 
 import lombok.RequiredArgsConstructor;
-import me.xdrop.fuzzywuzzy.Applicable;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
-import me.xdrop.fuzzywuzzy.ToStringFunction;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import me.xdrop.fuzzywuzzy.ratios.SimpleRatio;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -12,7 +10,6 @@ import org.astropeci.urmwstats.auth.RoleManager;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor

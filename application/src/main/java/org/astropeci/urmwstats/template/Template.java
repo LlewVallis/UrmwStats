@@ -3,7 +3,6 @@ package org.astropeci.urmwstats.template;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import net.dv8tion.jda.api.entities.Message;
 import org.astropeci.urmwstats.template.render.MessageNode;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

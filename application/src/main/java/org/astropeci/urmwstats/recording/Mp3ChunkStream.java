@@ -10,7 +10,10 @@ import net.dv8tion.jda.api.audio.AudioReceiveHandler;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 @Slf4j
 public class Mp3ChunkStream extends OutputStream implements AutoCloseable {
