@@ -165,16 +165,16 @@ public class CommandDispatcher extends ListenerAdapter {
         }
 
         if (!foundCommand) {
-            handleNotFound(message, event);
+            handleNotFound(message, prefix, event);
         }
 
         log.info("Command finished in #{} by {}: {}", event.getChannel().getName(), event.getAuthor().getName(), message);
     }
 
-    private void handleNotFound(String message, MessageReceivedEvent event) {
+    private void handleNotFound(String message, String prefix, MessageReceivedEvent event) {
         log.info("Command '{}' was not found", message);
 
-        if (event.isFromGuild()) {
+        if (event.isFromGuild() || !prefix.equals("")) {
             event.getChannel().sendMessage("🤷 Command not found").queue();
             event.getMessage().addReaction(FAILURE_EMOJI).queue();
         }
