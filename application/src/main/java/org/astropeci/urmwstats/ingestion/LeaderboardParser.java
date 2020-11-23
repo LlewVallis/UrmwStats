@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Component
 public class LeaderboardParser {
 
-    private static final Pattern REGEX = Pattern.compile("(?<name>[^\\s:]+): (?<trueskill>\\d+) RD (?<deviation>\\d+)");
+    private static final Pattern REGEX = Pattern.compile("(?<name>[^\\s:]+):? (?<trueskill>\\d+) RD (?<deviation>\\d+)");
 
     public List<Player> parse(List<Message> messages) {
         List<Player> players = parsePlayers(messages);
