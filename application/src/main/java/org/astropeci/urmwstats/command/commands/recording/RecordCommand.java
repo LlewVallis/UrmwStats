@@ -52,6 +52,10 @@ public class RecordCommand implements Command {
             CommandUtil.throwWrongNumberOfArguments();
         }
 
+        if (!event.isFromGuild()) {
+            throw new CommandException("❌ Recordings cannot be started in DMs");
+        }
+
         User author = event.getAuthor();
         Member member = event.getGuild().retrieveMember(author).complete();
         VoiceChannel channel = member.getVoiceState().getChannel();
