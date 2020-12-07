@@ -47,6 +47,10 @@ public class SecretProvider {
         return getEnv("REACTION_ROLE_MESSAGE_ID");
     }
 
+    public int getProductionHttpsPort() {
+        return getEnvInt("PRODUCTION_HTTPS_PORT");
+    }
+
     public String getReactionRoleRoleId() {
         return getEnv("REACTION_ROLE_ROLE_ID");
     }
@@ -59,5 +63,14 @@ public class SecretProvider {
         }
 
         return value;
+    }
+
+    private int getEnvInt(String variableName) {
+        String stringValue = getEnv(variableName);
+        try {
+            return Integer.parseInt(stringValue);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Invalid integer in variable " + variableName);
+        }
     }
 }
