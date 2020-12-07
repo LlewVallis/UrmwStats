@@ -5,9 +5,10 @@ import { Match, MatchParticipant } from "../../api/match";
 import { Player } from "../../api/player";
 import Skill from "../../api/skill";
 import { StandardData } from "../../api/standard-data";
-import { PrimaryColor, StandardDataContext } from "../App";
+import { PrimaryColor, SecondaryColor, StandardDataContext } from "../App";
 import { MatchCard } from "../history/History";
 import { ArrowSwitchIcon } from "@primer/octicons-react";
+import { Pie } from "react-chartjs-2";
 
 const Calculator = () => {
   const [winnerValues, setWinnerValues] = useState<SelectorValues>([]);
@@ -64,6 +65,14 @@ const Calculator = () => {
                   <MatchCard match={match} />
                 </div>
               ) : null}
+
+              {shouldShowHistory(winners, losers) ? (
+                <div style={{
+                  marginTop: "4rem",
+                }}>
+                  <HistoryCard winner={winners[0]} loser={losers[0]} />
+                </div>
+              ) : null}
             </div>
           </div>
         );
@@ -71,6 +80,45 @@ const Calculator = () => {
     </StandardDataContext.Consumer>
   );
 };
+
+function shouldShowHistory(winners: Player[], losers: Player[]): boolean {
+  if (winners.length !== 1) return false;
+  if (losers.length !== 1) return false;
+
+  const [ winner ] = winners;
+  const [ loser ] = losers;
+
+  if (winner.winsAgainst[loser.name] === undefined && winner.lossesAgainst[loser.name] === undefined) return false;
+
+  return true;
+}
+
+const HistoryCard = ({ winner, loser }: { winner: Player, loser: Player }) => (
+  <div>
+    <div style={{
+      marginBottom: "1rem",
+    }}>
+      <h2>Match history</h2>
+    </div>
+
+    <Pie
+      data={{
+        datasets: [{
+          data: [winner.winsAgainst[loser.name], winner.lossesAgainst[loser.name]],
+          backgroundColor: [PrimaryColor, SecondaryColor],
+        }],
+        labels: [`${winner.name} wins`, `${loser.name} wins`],
+      }}
+      options={{
+        legend: {
+          position: "bottom",
+        },
+      }}
+    />
+
+    <i>Match history only available for 1v1s</i>
+  </div>
+);
 
 type SelectorValues = OptionsType<{ label: string, value: Player }>;
 
