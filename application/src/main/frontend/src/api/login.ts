@@ -8,7 +8,7 @@ export interface LoginDetails {
   staff: boolean,
 }
 
-const loginDetails: Promise<LoginDetails> = requestJson("/api/discord-user");
+const loginDetails: Promise<LoginDetails> = requestJson("/api/discord-user").catch(() => null);
 
 export default loginDetails;
 

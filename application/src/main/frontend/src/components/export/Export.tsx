@@ -6,10 +6,17 @@ import discordIcon from "./discord-icon.svg";
 import { Button } from "react-bootstrap";
 import { DownloadIcon, BookmarkSlashIcon } from "@primer/octicons-react";
 import { Base64 } from "js-base64";
+import Twemoji from "react-twemoji";
 import * as fileSaver from "file-saver";
 import * as discordMarkdown from "discord-markdown";
 import * as userData from "../../api/user-data";
 import * as pako from "pako";
+
+import "./export.scss";
+
+const ForegroundColor = "#dcddde";
+const BackgroundColor = "#36393f";
+const BackgroundSecondaryColor = "#2f3136";
 
 interface ExportData {
   timestamp: string;
@@ -83,57 +90,82 @@ const Export = () => {
       });
   }, [attachmentUrl]);
 
-  if (data) {
-    const date = new Date(data.timestamp);
+  return (
+    <div style={{
+      color: ForegroundColor,
+      backgroundColor: BackgroundColor,
+      minHeight: "100vh",
+    }}>
+      {(() => {
+        if (data) {
+          const date = new Date(data.timestamp);
 
-    return (
-      <>
-        <div style={{
-          display: "flex",
-        }}>
-          <h1 style={{
-            margin: 0,
-          }}>
-            Export of #{data.channelName}
-          </h1>
-
-          <div style={{
-            flexGrow: 1,
-            alignSelf: "center",
-            textAlign: "right",
-          }}>
-            <Button onClick={() => {
-              const dataString = JSON.stringify(data);
-              const dataBlob = new Blob([dataString], { type: "application/json" });
-              const dataUrl = URL.createObjectURL(dataBlob);
-
-              try {
-                window.open(dataUrl);
-              } finally {
-                URL.revokeObjectURL(dataUrl);
-              }
+          return (
+            <div style={{
+              padding: "2rem 5rem",
             }}>
-              Inspect JSON
-            </Button>
-          </div>
-        </div>
-        <h3 style={{
-          margin: 0,
-          marginBottom: "2rem",
-          opacity: 0.5,
-        }}>
-          {date.toLocaleTimeString()} {" "} {date.toLocaleDateString()}
-        </h3>
-        <ExportViewer data={data} />
-      </>
-    );
-  } else {
-    return <PageSpinner message={statusMessage} errored={errored} />;
-  }
+              <div style={{
+                display: "flex",
+              }}>
+                <h1 style={{
+                  margin: 0,
+                }}>
+                  Export of #{data.channelName}
+                </h1>
+
+                <div style={{
+                  flexGrow: 1,
+                  alignSelf: "center",
+                  textAlign: "right",
+                }}>
+                  <Button onClick={() => {
+                    const dataString = JSON.stringify(data);
+                    const dataBlob = new Blob([dataString], { type: "application/json" });
+                    const dataUrl = URL.createObjectURL(dataBlob);
+
+                    try {
+                      window.open(dataUrl);
+                    } finally {
+                      URL.revokeObjectURL(dataUrl);
+                    }
+                  }}>
+                    Inspect JSON
+                  </Button>
+                </div>
+              </div>
+              <h3 style={{
+                margin: 0,
+                marginBottom: "2rem",
+                opacity: 0.5,
+              }}>
+                {date.toLocaleTimeString()} {" "} {date.toLocaleDateString()}
+              </h3>
+              <ExportViewer data={data} />
+            </div>
+          );
+        } else {
+          return (
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100vh",
+            }}>
+              <div>
+                <PageSpinner message={statusMessage} errored={errored} />
+              </div>
+            </div>
+          );
+        }
+      })()}
+    </div>
+  );
 };
 
 const ExportViewer = ({ data }: { data: ExportData }) => (
-  <>{data.messages.map((message, i) => <Message key={i} message={message} data={data} />).reverse()}</>
+  <Twemoji options={{ className: "twemoji" }}>
+    {data.messages.map((message, i) => <Message key={i} message={message} data={data} />).reverse()}
+  </Twemoji>
 );
 
 const Message = ({ message, data }: { message: Message, data: ExportData }) => {
@@ -188,10 +220,13 @@ const GenericMessage = ({ children, message, author, avatarUri }: GenericMessage
   const date = new Date(message.timestamp);
 
   return (
-    <div style={{
-      display: "flex",
-      marginBottom: "0.75rem",
-    }}>
+    <div 
+      className="message-content"
+      style={{
+        display: "flex",
+        marginBottom: "0.75rem",
+      }}
+    >
       <img alt="" src={avatarUri || discordIcon} style ={{
         width: "32px",
         height: "32px",
@@ -255,22 +290,27 @@ const NormalMessage = ({ message, data }: { message: Message, data: ExportData }
 
 const Embed = ({ embed }: { embed: Embed }) => (
   <div style={{
-    width: "50%",
-    margin: "0.75rem 0",
-    border: "1px solid black",
-    borderRadius: "10px",
-    padding: "1rem",
+    maxWidth: "520px",
+    backgroundColor: BackgroundSecondaryColor,
+    borderLeft: "4px solid #9b59b6",
+    borderRadius: "4px",
+    padding: "0.5rem 1rem 1rem 0.75rem"
   }}>
     <div>
       <b><DiscordMarkdown embed>{embed.author}</DiscordMarkdown></b>
     </div>
-    <div>
+    <div style={{
+      color: "white",
+      fontSize: "105%"
+    }}>
       <b><DiscordMarkdown embed>{embed.title}</DiscordMarkdown></b>
     </div>
 
     <div><DiscordMarkdown embed>{embed.description}</DiscordMarkdown></div>
 
-    <div>
+    <div style={{
+      display: "inline-grid",
+    }}>
       {embed.fields.map((field, i) => <EmbedField key={i} field={field} />)}
     </div>
 
@@ -279,7 +319,10 @@ const Embed = ({ embed }: { embed: Embed }) => (
 );
 
 const EmbedField = ({ field }: { field: EmbedField }) => (
-  <div>
+  <div style={{
+    marginTop: "0.25rem",
+    fontSize: "0.875rem",
+  }}>
     <div>
       <b><DiscordMarkdown embed>{field.name}</DiscordMarkdown></b>
     </div>

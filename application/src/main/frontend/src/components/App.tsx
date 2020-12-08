@@ -86,14 +86,21 @@ export default class App extends Component<{}, AppState> {
   render(): ReactNode {
     return (
       <BrowserRouter>
-        <ToastContainer />
-        <Header state={this.state} />
+        <Switch>
+          <Route path="/export/:channelId/:attachmentId/:fileName">
+            <Export />
+          </Route>
+          <Route>
+            <ToastContainer />
+            <Header state={this.state} />
 
-        <main style={{
-          overflowX: "hidden",
-        }}>
-          {this.renderContent()}
-        </main>
+            <main style={{
+              overflowX: "hidden",
+            }}>
+              {this.renderContent()}
+            </main>
+          </Route>
+        </Switch>
       </BrowserRouter>
     );
   }
@@ -117,9 +124,6 @@ export default class App extends Component<{}, AppState> {
             </Route>
             <Route path="/player/:name">
               <Player />
-            </Route>
-            <Route path="/export/:channelId/:attachmentId/:fileName">
-              <Export />
             </Route>
             <Route path="/staff">
               <Staff />
