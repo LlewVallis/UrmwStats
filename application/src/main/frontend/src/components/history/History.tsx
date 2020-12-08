@@ -195,7 +195,7 @@ const Team = ({ team }: { team: MatchParticipant[] }) => {
       elements.push(<>, </>);
     }
 
-    elements.push(<PlayerName name={team[i].name} />);
+    elements.push(<PlayerName key={team[i].name} name={team[i].name} />);
   }
 
   return <>{elements}</>;

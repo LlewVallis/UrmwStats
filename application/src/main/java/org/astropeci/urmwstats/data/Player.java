@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -30,6 +31,8 @@ public class Player {
     private Map<String, Integer> lossesAgainst;
 
     private int streak;
+
+    private List<String> completedAchievements;
 
     public String getRankName() {
         double trueskill = skill.getTrueskill();

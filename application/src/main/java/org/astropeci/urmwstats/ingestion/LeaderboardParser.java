@@ -65,7 +65,8 @@ public class LeaderboardParser {
                     0, 0,
                     0.0, 0, 0, 0,
                     new HashMap<>(), new HashMap<>(),
-                    0
+                    0,
+                    new ArrayList<>()
             );
 
             players.add(player);

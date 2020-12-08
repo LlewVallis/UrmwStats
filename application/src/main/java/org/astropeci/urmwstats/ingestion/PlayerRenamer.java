@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -17,11 +19,11 @@ public class PlayerRenamer {
 
     private Map<String, String> renames;
 
-    public void addRenames(Map<String, Player> playersByName) {
-        getRenames().forEach((oldName, newName) -> {
+    public void addRenames(Map<String, Player> playersByName, boolean includeDeletions) {
+        getRenames(includeDeletions).forEach((oldName, newName) -> {
             Player player = playersByName.get(newName);
 
-            if (player == null) {
+            if (player == null && newName != null) {
                 log.warn("Renaming of " + oldName + " to " + newName + " could not be completed since " + newName + " did not exist");
                 return;
             }
@@ -31,13 +33,19 @@ public class PlayerRenamer {
     }
 
     @SneakyThrows({ IOException.class })
-    public Map<String, String> getRenames() {
+    public Map<String, String> getRenames(boolean includeDeletions) {
         if (renames == null) {
             ObjectMapper mapper = new ObjectMapper();
             URL renameFile = getClass().getResource("/player-renames.json");
             renames = mapper.readValue(renameFile, new TypeReference<>() { });
         }
 
-        return renames;
+        if (includeDeletions) {
+            return Collections.unmodifiableMap(renames);
+        } else {
+            return renames.entrySet().stream()
+                    .filter(entry -> entry.getValue() != null)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
     }
 }

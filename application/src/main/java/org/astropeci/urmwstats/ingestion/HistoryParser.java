@@ -37,7 +37,7 @@ public class HistoryParser {
         Map<String, Player> playersByName = players.stream()
                 .collect(Collectors.toMap(Player::getName, Function.identity()));
 
-        playerRenamer.addRenames(playersByName);
+        playerRenamer.addRenames(playersByName, false);
 
         List<Match> matches = new ArrayList<>();
         List<Tourney> tourneys = new ArrayList<>();

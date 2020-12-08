@@ -19,6 +19,7 @@ import Staff from "./staff/Staff";
 
 import "react-toastify/dist/ReactToastify.css";
 import Export from "./export/Export";
+import Achievements from "./achievements/Achievements";
 
 export const PrimaryColor = "#663399";
 export const SecondaryColor = "#ff4c81";
@@ -115,6 +116,9 @@ export default class App extends Component<{}, AppState> {
             </Route>
             <Route path="/players">
               <Players />
+            </Route>
+            <Route path="/achievements">
+              <Achievements />
             </Route>
             <Route path="/history">
               <History />

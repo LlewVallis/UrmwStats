@@ -16,6 +16,7 @@ export interface Player {
   lossesAgainst: Record<string, number>;
   rankName: string;
   streak: number;
+  completedAchievements: string[];
 }
 
 export function fetch(): Promise<Player[]> {

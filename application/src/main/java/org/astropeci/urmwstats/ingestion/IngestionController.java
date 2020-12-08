@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.astropeci.urmwstats.data.Achievement;
 import org.astropeci.urmwstats.data.Player;
 import org.astropeci.urmwstats.data.RepositoryCoordinator;
 import org.springframework.context.annotation.Profile;
@@ -29,6 +30,7 @@ public class IngestionController extends ListenerAdapter implements AutoCloseabl
 
     private static final String LEADERBOARD_CHANNEL = "trueskill-urmwbot";
     private static final String HISTORY_CHANNEL = "trueskill-history-urmwbot";
+    private static final String ACHIEVEMENT_CHANNEL = "achievements";
 
     private static final int MESSAGE_HISTORY_LIMIT = 10000;
     private static final int UPDATE_DELAY_MILLIS = 5000;
@@ -36,6 +38,7 @@ public class IngestionController extends ListenerAdapter implements AutoCloseabl
     private final RepositoryCoordinator repositoryCoordinator;
     private final LeaderboardParser leaderboardParser;
     private final HistoryParser historyParser;
+    private final AchievementsParser achievementsParser;
     private final JDA jda;
 
     private final AtomicBoolean updateRequested = new AtomicBoolean(true);
@@ -45,11 +48,13 @@ public class IngestionController extends ListenerAdapter implements AutoCloseabl
             RepositoryCoordinator repositoryCoordinator,
             LeaderboardParser leaderboardParser,
             HistoryParser historyParser,
+            AchievementsParser achievementsParser,
             JDA jda
     ) {
         this.repositoryCoordinator = repositoryCoordinator;
         this.leaderboardParser = leaderboardParser;
         this.historyParser = historyParser;
+        this.achievementsParser = achievementsParser;
         this.jda = jda;
 
         log.info("Launching ingestion engine");
@@ -85,22 +90,27 @@ public class IngestionController extends ListenerAdapter implements AutoCloseabl
         log.info("Performing ingestion");
         MessageChannel leaderboardChannel = getChannelByName(LEADERBOARD_CHANNEL);
         MessageChannel historyChannel = getChannelByName(HISTORY_CHANNEL);
+        MessageChannel achievementChannel = getChannelByName(ACHIEVEMENT_CHANNEL);
 
         CompletableFuture<List<Message>> leaderboardMessagesFuture = readMessages(leaderboardChannel);
         CompletableFuture<List<Message>> historyMessagesFuture = readMessages(historyChannel);
+        CompletableFuture<List<Message>> achievementMessagesFuture = readMessages(achievementChannel);
 
         log.info("Fetching messages for ingestion");
         List<Message> leaderboardMessages = leaderboardMessagesFuture.get();
         List<Message> historyMessages = historyMessagesFuture.get();
+        List<Message> achievementMessages = achievementMessagesFuture.get();
 
         Collections.reverse(leaderboardMessages);
         Collections.reverse(historyMessages);
+        Collections.reverse(achievementMessages);
 
         log.info("Ingesting messages");
         List<Player> players = leaderboardParser.parse(leaderboardMessages);
         HistoryParser.History matches = historyParser.parse(historyMessages, players);
+        List<Achievement> achievements = achievementsParser.parse(achievementMessages, players);
 
-        repositoryCoordinator.update(players, matches.getMatches(), matches.getTourneys());
+        repositoryCoordinator.update(players, matches.getMatches(), matches.getTourneys(), achievements);
 
         log.info("Successfully ingested and updated");
     }

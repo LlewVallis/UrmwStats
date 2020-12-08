@@ -26,6 +26,6 @@ public class PlayerEndpoints {
 
     @GetMapping("/renames")
     public Map<String, String> renames() {
-        return playerRenamer.getRenames();
+        return playerRenamer.getRenames(true);
     }
 }

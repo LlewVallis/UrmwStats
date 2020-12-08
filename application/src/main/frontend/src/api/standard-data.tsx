@@ -1,3 +1,4 @@
+import { Achievement } from "./achievement";
 import { requestJson } from "./api";
 
 import { Info } from "./info";
@@ -7,6 +8,7 @@ import { Tourney } from "./tourney";
 export interface StandardData {
   info: Info;
   players: Player[];
+  achievements: Achievement[];
   lastTourney: Tourney;
 }
 

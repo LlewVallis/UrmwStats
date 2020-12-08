@@ -31,9 +31,10 @@ const Header = ({ state }: { state: AppState }) => {
         overflow: "hidden",
       }}>
         <Page location="/about">About</Page>
-        <Page location="/players">Players</Page>
-        <Page location="/history">History</Page>
         <Page location="/calculator">Calculator</Page>
+        <Page location="/players">Players</Page>
+        <Page location="/achievements">Achievements</Page>
+        <Page location="/history">History</Page>
       </div>
 
       <div className="ml-auto">
@@ -60,7 +61,7 @@ const Page = ({ children, location }: { children: ReactNode, location: string })
     style={{
       fontSize: "110%",
       fontWeight: "bold",
-      margin: "0 1rem",
+      margin: "0 0.75rem",
     }}
   >
     {children}

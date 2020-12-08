@@ -23,6 +23,7 @@ public class InfoEndpoints {
     private final PlayerRepository playerRepository;
     private final MatchRepository matchRepository;
     private final TourneyRepository tourneyRepository;
+    private final AchievementRepository achievementRepository;
 
     @Value
     private static class Info {
@@ -30,6 +31,7 @@ public class InfoEndpoints {
         int playerCount;
         int matchCount;
         int tourneyCount;
+        int achievementCount;
         TrueskillSettings trueskillSettings;
     }
 
@@ -37,6 +39,7 @@ public class InfoEndpoints {
     private static class StandardData {
         Info info;
         List<Player> players;
+        List<Achievement> achievements;
         Tourney lastTourney;
     }
 
@@ -47,6 +50,7 @@ public class InfoEndpoints {
                 playerRepository.size(),
                 matchRepository.size(),
                 tourneyRepository.size(),
+                achievementRepository.size(),
                 new TrueskillSettings()
         );
     }
@@ -61,6 +65,7 @@ public class InfoEndpoints {
         return new StandardData(
                 info(),
                 playerRepository.byRanking(),
+                achievementRepository.byName(),
                 lastTourney.get()
         );
     }

@@ -34,13 +34,18 @@ const About = () => (
           </Route>
 
           <Route title="/standard-data" lastUpdated={lastUpdated}>
-            A richer version of <Mono>/info</Mono> which additionally returns data for all players and data for the last tourney.
-            This essentially packages <Mono>/info</Mono>, <Mono>/players</Mono> and <Mono>/tourneys?count=1</Mono> into a single request.
+            A richer version of <Mono>/info</Mono> which additionally returns achievements, data for all players and data for the last tourney.
+            This essentially packages <Mono>/info</Mono>, <Mono>/achievements</Mono>, <Mono>/players</Mono> and <Mono>/tourneys?count=1</Mono> into a single request.
           </Route>
 
           <Route title="/players" lastUpdated={lastUpdated}>
             Provides an array containing every player on the leaderboard ordered by their ranking.
             Each player is accompanied by detailed statisitcs.
+          </Route>
+
+          <Route title="/achievements" lastUpdated={lastUpdated}>
+            Provides an array containing every achievement ordered by their names.
+            Each achievement comes with the players that have completed it and its description, or <Mono>null</Mono> if it is a secret achievement.
           </Route>
 
           <Route title="/renames" lastUpdated={lastUpdated}>

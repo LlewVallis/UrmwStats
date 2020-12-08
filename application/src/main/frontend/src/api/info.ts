@@ -5,6 +5,7 @@ export interface Info {
   playerCount: number;
   matchCount: number;
   tourneyCount: number;
+  achievementCount: number;
   trueskillSettings: TrueskillSettings;
 }
 

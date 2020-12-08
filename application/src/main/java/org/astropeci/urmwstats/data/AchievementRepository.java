@@ -1,7 +1,6 @@
 package org.astropeci.urmwstats.data;
 
 import lombok.Cleanup;
-import lombok.Synchronized;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,25 +8,25 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 @Component
-public class PlayerRepository {
+public class AchievementRepository {
 
-    private volatile List<Player> players = new ArrayList<>();
+    private volatile List<Achievement> achievements = new ArrayList<>();
 
-    public List<Player> byRanking() {
+    public List<Achievement> byName() {
         @Cleanup("unlock") Lock lock = RepositoryCoordinator.LOCK.readLock();
         lock.lock();
 
-        return new ArrayList<>(players);
+        return new ArrayList<>(achievements);
     }
 
     public int size() {
         @Cleanup("unlock") Lock lock = RepositoryCoordinator.LOCK.readLock();
         lock.lock();
 
-        return players.size();
+        return achievements.size();
     }
 
-    /* package-private */ void update(List<Player> players) {
-        this.players = players;
+    /* package-private */ void update(List<Achievement> achievements) {
+        this.achievements = achievements;
     }
 }

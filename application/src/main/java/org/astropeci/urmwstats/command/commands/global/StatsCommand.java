@@ -24,6 +24,7 @@ public class StatsCommand implements Command {
     private final PlayerRepository playerRepository;
     private final MatchRepository matchRepository;
     private final TourneyRepository tourneyRepository;
+    private final AchievementRepository achievementRepository;
 
     @Override
     public String label() {
@@ -113,6 +114,17 @@ public class StatsCommand implements Command {
                 player.getTimesPlacedThird()
         ), true);
 
+        List<Achievement> completedAchievements = achievementRepository.byName().stream()
+                .filter(achievement -> player.getCompletedAchievements().contains(achievement.getName()))
+                .collect(Collectors.toList());
+
+        embed.addField("Achievements completed", String.format(
+                "**Total**: %s\n**Normal**: %s\n**Secret**: %s",
+                completedAchievements.size(),
+                completedAchievements.stream().filter(achievement -> achievement.getDescription() != null).count(),
+                completedAchievements.stream().filter(achievement -> achievement.getDescription() == null).count()
+        ), true);
+
         event.getChannel().sendMessage(embed.build()).queue();
     }
 
@@ -120,9 +132,9 @@ public class StatsCommand implements Command {
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder()
                 .setTitle("📈 Season statistics", "https://urmw.live");
 
-        appendLastTourneyPlacings(embed);
         appendTopPlayers(embed);
         appendTopTourneyWinners(embed);
+        appendMostAchievements(embed);
         appendLongestStreaks(embed);
         appendMostWins(embed);
         appendHighestWinRate(embed);
@@ -155,16 +167,21 @@ public class StatsCommand implements Command {
         }
     }
 
-    private void appendLastTourneyPlacings(EmbedBuilder embed) {
-        tourneyRepository.mostRecent(1, null).stream().findFirst().ifPresent(tourney -> {
-            List<Set<String>> teams = List.of(tourney.getFirst(), tourney.getSecond(), tourney.getThird());
-            List<String> teamStrings = teams.stream()
-                    .limit(3)
-                    .map(team -> String.join(", ", team))
-                    .collect(Collectors.toList());
+    private void appendMostAchievements(EmbedBuilder embed) {
+        List<String> playerStrings = playerRepository.byRanking().stream()
+                .sorted(Comparator.<Player>comparingInt(player -> player.getCompletedAchievements().size()).reversed())
+                .limit(3)
+                .filter(player -> player.getCompletedAchievements().size() > 0)
+                .map(player -> String.format(
+                        "%s (%s)",
+                        player.getName(),
+                        new DecimalFormat("#.##").format(player.getCompletedAchievements().size())
+                ))
+                .collect(Collectors.toList());
 
-            embed.addField("Last tourney placings", rankingString(teamStrings), true);
-        });
+        if (playerStrings.size() > 0) {
+            embed.addField("Most achievements", rankingString(playerStrings), true);
+        }
     }
 
     private void appendTopTourneyWinners(EmbedBuilder embed) {

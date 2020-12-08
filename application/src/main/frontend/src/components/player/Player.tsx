@@ -1,6 +1,7 @@
 import React from "react";
 import { Spinner } from "react-bootstrap";
 import { useParams } from "react-router-dom";
+import { AchievementCard } from "../achievements/Achievements";
 import { StandardDataContext } from "../App";
 import MatchHistoryProvider from "../MatchHistoryProvider";
 import PlayerFigures from "./PlayerFigures";
@@ -51,6 +52,30 @@ const Player = () => {
 
                 <PlayerFigures player={player} />
                 <WinRateGraphs player={player} />
+
+                {player.completedAchievements.length > 0 ? (
+                  <>
+                    <h1 style={{
+                      marginTop: "7.5rem",
+                    }}>Achievements</h1>
+                    
+                    <div style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      flexWrap: "wrap",
+                    }}>
+                      {(() => {
+                        const achievements = player.completedAchievements.map(name => 
+                          data.achievements.find(achievement => achievement.name === name)!
+                        );
+
+                        achievements.sort((a, b) => b.playersCompleted.length - a.playersCompleted.length);
+
+                        return achievements.map(achievement => <AchievementCard achievement={achievement} />)
+                      })()}
+                    </div>
+                  </>
+                ) : null}
               </>
             );
           } else {
