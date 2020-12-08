@@ -22,6 +22,7 @@ public class AchievementsParser {
     private static final int MATCH_WARN_THRESHOLD = 85;
 
     private final PlayerRenamer playerRenamer;
+    private final AchievementAdditionsProvider achievementAdditionsProvider;
 
     public List<Achievement> parse(List<Message> messages, List<Player> players) {
         Map<String, Player> playersByName = players.stream()
@@ -32,6 +33,21 @@ public class AchievementsParser {
         if (!messages.isEmpty()) {
             messages.remove(0);
         }
+
+        Map<String, List<Player>> achievementAdditions = achievementAdditionsProvider.getAdditions().entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .flatMap(name -> {
+                                    Player player = playersByName.get(name);
+                                    if (player == null) {
+                                        log.warn("Missing player in achievement additions: {}", name);
+                                    }
+
+                                    return Optional.ofNullable(player).stream();
+                                })
+                                .collect(Collectors.toList())
+                ));
 
         List<Achievement> achievements = new ArrayList<>();
         for (Message message : messages) {
@@ -48,8 +64,18 @@ public class AchievementsParser {
             boolean doneLineUsed = false;
             String lastLine = lines.get(lines.size() - 1);
             if (startsWithIgnoreCase(lastLine, "done")) {
-                playersCompleted = parseDoneLine(lastLine, playersByName);
+                playersCompleted.addAll(parseDoneLine(lastLine, playersByName));
                 doneLineUsed = true;
+            }
+
+            if (achievementAdditions.containsKey(name)) {
+                for (Player player : achievementAdditions.get(name)) {
+                    if (playersCompleted.contains(player)) {
+                        log.warn("Redundant addition of player {} to achievement {}", player.getName(), name);
+                    } else {
+                        playersCompleted.add(player);
+                    }
+                }
             }
 
             for (Player player : playersCompleted) {
@@ -77,6 +103,12 @@ public class AchievementsParser {
         for (Player player : playersByName.values()) {
             if (player != null) {
                 player.getCompletedAchievements().sort(Comparator.comparing(String::toString));
+            }
+        }
+
+        for (String additionName : achievementAdditions.keySet()) {
+            if (achievements.stream().noneMatch(achievement -> achievement.getName().equals(additionName))) {
+                log.warn("Achievement addition for non-existent achievement: {}", additionName);
             }
         }
 
