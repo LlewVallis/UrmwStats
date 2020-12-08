@@ -1,7 +1,6 @@
 package org.astropeci.urmwstats.data;
 
 import lombok.Cleanup;
-import lombok.Synchronized;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

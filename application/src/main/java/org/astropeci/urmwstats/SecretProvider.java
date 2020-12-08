@@ -39,20 +39,8 @@ public class SecretProvider {
         return getEnv("TOURNEY_CHANNEL_ID");
     }
 
-    public String getReactionRoleEmote() {
-        return getEnv("REACTION_ROLE_EMOTE");
-    }
-
-    public String getReactionRoleMessageId() {
-        return getEnv("REACTION_ROLE_MESSAGE_ID");
-    }
-
     public int getProductionHttpsPort() {
         return getEnvInt("PRODUCTION_HTTPS_PORT");
-    }
-
-    public String getReactionRoleRoleId() {
-        return getEnv("REACTION_ROLE_ROLE_ID");
     }
 
     private String getEnv(String variableName) {
