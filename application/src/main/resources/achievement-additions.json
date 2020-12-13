@@ -1,5 +1,5 @@
 {
-  "Deflector": ["pv_pro", "UnWin", "Marlon", "Cistic"],
+  "Deflector": ["pv_pro", "UnWin", "Marlon", "Cistic", "Kapa"],
   "I Can Go The Distance": ["Chronos", "kcor_noved", "K1e24", "Toul", "Indigo", "MapleMaelstrom", "sammyuri", "Cohn", "pv_pro", "Cistic", "RiptideGKR", "Talosine", "Onyclaudio", "Raster556"],
   "Wing Clipper": ["Chronos", "Faquarl", "Parkins1000", "sammyuri", "Skyttesen", "Fury_101", "Cohn", "Talosine", "ahAviation", "pv_pro", "Marlon", "Onyclaudio"],
   "My Legs Are Having Issues": ["kcor_noved", "RiptideGKR", "pv_pro", "Fury_101", "Emery", "TurkeyLauncher", "Marlon", "Onyclaudio"],
@@ -16,11 +16,11 @@
   "I Can Handle It...": ["pv_pro", "Gab"],
   "Faceplant": ["Kapa", "Ranger", "Faquarl", "builder993", "pv_pro", "Gab", "M161", "Marlon"],
   "Burn Baby Burn": ["UnWin", "MapleMaelstrom", "Fury_101", "Alberto", "Cistic", "pv_pro", "RiptideGKR", "Malino05", "Axemabaro", "TurkeyLauncher", "Marlon", "Smurfii"],
-  "Hot Potato": ["sammyuri", "builder993", "pv_pro", "Wizard", "CAG", "Eon", "Chronos", "ahAviation"],
+  "Hot Potato": ["sammyuri", "builder993", "pv_pro", "Wizard", "CAG", "Eon", "Chronos", "ahAviation", "Jelly_exe"],
   "The Fireball Singularity": ["Indigo", "MapleMaelstrom", "UnWin", "pv_pro", "Onyclaudio"],
-  "Next Level Voodoo": ["LordsGame", "Pigo", "TurkeyLauncher", "Gab", "pv_pro", "Marlon", "Smurfii", "Fury_101", "Jelly_exe"],
+  "Next Level Voodoo": ["LordsGame", "Pigo", "TurkeyLauncher", "Gab", "pv_pro", "Marlon", "Smurfii", "Fury_101", "Jelly_exe", "Ranger"],
   "Master Marksman": ["pv_pro"],
-  "Wolf In Sheep's Clothing": ["kcor_noved", "CAG", "Xorizontal", "RiptideGKR", "Chronos", "TurkeyLauncher", "Fury_101", "Marlon"],
+  "Wolf In Sheep's Clothing": ["kcor_noved", "CAG", "Xorizontal", "RiptideGKR", "Chronos", "TurkeyLauncher", "Fury_101", "Marlon", "pv_pro"],
   "R-N-Jesus": ["UnWin", "CAG", "pv_pro", "eragaurd", "Marlon"],
   "The Realest Professional": ["pv_pro", "DarkKronicle", "Gab"],
   "Hitchhiker": ["Faquarl", "Robo", "Gab", "kcor_noved", "Xorizontal", "pv_pro"],
@@ -36,8 +36,8 @@
   "Snipes": ["pv_pro", "Gab"],
   "Hat Trick": ["pv_pro", "Faquarl", "Fury_101", "TurkeyLauncher", "Onyclaudio", "M161"],
   "Hybridization": ["TurkeyLauncher", "Fury_101"],
-  "Scavenger": ["Gab", "Ranger", "Marlon"],
-  "A Real Professional": ["Gab", "DarkKronicle", "Xorizontal"],
+  "Scavenger": ["Gab", "Ranger", "Marlon", "pv_pro"],
+  "A Real Professional": ["Gab", "DarkKronicle", "Xorizontal", "pv_pro"],
   "Take Cover!": ["UnWin", "pv_pro", "M161", "Marlon"],
   "Airstrike Inbound": ["Zorua", "sammyuri", "Gab", "Chronos", "pv_pro"],
   "Mortar": ["Cistic", "pv_pro", "Gab", "TurkeyLauncher"],
@@ -46,5 +46,7 @@
   "Kapa150": ["pv_pro"],
   "Toma Fleet": ["Indigo"],
   "Stronger Together!": ["CAG", "UnWin", "TNTCreeper", "Eon", "LordsGame", "Haccker", "K1e24", "Llewv"],
-  "Seems Legit": ["Gab", "Cistic", "UnWin", "Robo", "Toul", "MapleMaelstrom", "pv_pro"]
+  "Seems Legit": ["Gab", "Cistic", "UnWin", "Robo", "Toul", "MapleMaelstrom", "pv_pro"],
+  "Franklin Badge": ["pv_pro"],
+  "Hot Hands": ["pv_pro"]
 }
