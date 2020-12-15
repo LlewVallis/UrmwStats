@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 public enum HelpSection {
 
     GLOBAL(null),
+    ACHIEVEMENT("Achievement commands"),
     UTILITY("Utility commands"),
     RECORDING("Recording commands"),
     TEMPLATE("Template commands"),

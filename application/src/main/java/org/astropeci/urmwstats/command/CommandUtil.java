@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.astropeci.urmwstats.data.Achievement;
+import org.astropeci.urmwstats.data.AchievementRepository;
 import org.astropeci.urmwstats.data.Player;
 import org.astropeci.urmwstats.data.PlayerRepository;
 
@@ -38,9 +40,24 @@ public class CommandUtil {
         Map<String, Player> playersByName = playerRepository.byRanking().stream()
                 .collect(Collectors.toMap(Player::getName, Function.identity()));
 
+        return fuzzyMatch(playersByName, fuzzyName);
+    }
+
+    public Achievement matchAchievement(AchievementRepository achievementRepository, String fuzzyName) {
+        if (achievementRepository.size() == 0) {
+            return null;
+        }
+
+        Map<String, Achievement> achievementsByName = achievementRepository.byName().stream()
+                .collect(Collectors.toMap(Achievement::getName, Function.identity()));
+
+        return fuzzyMatch(achievementsByName, fuzzyName);
+    }
+
+    private <T> T fuzzyMatch(Map<String, T> byName, String fuzzyName) {
         BoundExtractedResult<String> searchResult = FuzzySearch.extractOne(
                 fuzzyName.toLowerCase(),
-                playersByName.keySet(),
+                byName.keySet(),
                 (ToStringFunction<String>) String::toLowerCase
         );
 
@@ -49,7 +66,7 @@ public class CommandUtil {
         }
 
         String name = searchResult.getReferent();
-        return playersByName.get(name);
+        return byName.get(name);
     }
 
     public String templateName(String input) {
