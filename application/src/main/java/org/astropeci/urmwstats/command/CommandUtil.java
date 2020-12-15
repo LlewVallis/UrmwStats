@@ -14,6 +14,7 @@ import org.astropeci.urmwstats.data.Player;
 import org.astropeci.urmwstats.data.PlayerRepository;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -52,6 +53,19 @@ public class CommandUtil {
                 .collect(Collectors.toMap(Achievement::getName, Function.identity()));
 
         return fuzzyMatch(achievementsByName, fuzzyName);
+    }
+
+    public String formatAsList(List<String> values) {
+        StringBuilder result = new StringBuilder();
+        for (String value : values) {
+            if (result.length() != 0) {
+                result.append("\n");
+            }
+
+            result.append("• ").append(value);
+        }
+
+        return result.toString();
     }
 
     private <T> T fuzzyMatch(Map<String, T> byName, String fuzzyName) {

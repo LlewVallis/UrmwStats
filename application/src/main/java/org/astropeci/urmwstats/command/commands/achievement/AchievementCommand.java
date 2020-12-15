@@ -141,9 +141,9 @@ public class AchievementCommand implements Command {
                 title = String.format("Completers (%s)", allCompleters.size());
             }
 
-            embed.addField(title, formatAsList(leftColumn), true);
-            embed.addField("", formatAsList(centerColumn), true);
-            embed.addField("", formatAsList(rightColumn), true);
+            embed.addField(title, CommandUtil.formatAsList(leftColumn), true);
+            embed.addField("", CommandUtil.formatAsList(centerColumn), true);
+            embed.addField("", CommandUtil.formatAsList(rightColumn), true);
         }
 
         if (pages > 1) {
@@ -155,18 +155,5 @@ public class AchievementCommand implements Command {
         }
 
         event.getChannel().sendMessage(embed.build()).queue();
-    }
-
-    private String formatAsList(List<String> values) {
-        StringBuilder result = new StringBuilder();
-        for (String value : values) {
-            if (result.length() != 0) {
-                result.append("\n");
-            }
-
-            result.append("• ").append(value);
-        }
-
-        return result.toString();
     }
 }
