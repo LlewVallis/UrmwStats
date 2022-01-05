@@ -120,7 +120,6 @@ public class AchievementsParser {
         String[] headerAndBody = line.split(":");
 
         if (headerAndBody.length != 2) {
-            log.warn("Malformed achievement done line: {}", line);
             return List.of();
         }
 
@@ -131,7 +130,7 @@ public class AchievementsParser {
 
         for (String playerName : playerNamesRaw) {
             playerName = cleanString(playerName);
-            Player player = lookupPlayer(playerName, playersByName);
+            Player player = playersByName.get(playerName);
 
             if (player != null) {
                 result.add(player);
@@ -139,27 +138,6 @@ public class AchievementsParser {
         }
 
         return result;
-    }
-
-    private Player lookupPlayer(String fuzzyName, Map<String, Player> playersByName) {
-        if (playersByName.size() == 0) {
-            log.warn("Achievement messages cannot be parsed when no players exist");
-            return null;
-        }
-
-        BoundExtractedResult<String> searchResult = FuzzySearch.extractOne(
-                fuzzyName.toLowerCase(),
-                playersByName.keySet(),
-                (ToStringFunction<String>) String::toLowerCase
-        );
-
-        String name = searchResult.getReferent();
-
-        if (searchResult.getScore() < MATCH_WARN_THRESHOLD) {
-            log.warn("Player name '" + fuzzyName + "' matched to '" + name + "' with low score of " + searchResult.getScore());
-        }
-
-        return playersByName.get(name);
     }
 
     private boolean startsWithIgnoreCase(String haystack, String needle) {

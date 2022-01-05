@@ -17,7 +17,7 @@ public class MatchParser {
 
     private static final Pattern MATCH_HEADER_REGEX = Pattern.compile("(?<team1>.+) vs (?<team2>.+)");
     private static final Pattern MATCH_PARTICIPANT_REGEX =
-            Pattern.compile("(?<name>\\S+) (\\*\\*[+-]\\d+\\*\\*,\\*\\*[+-]\\d+\\*\\* )?\\((?<trueskill>\\d+)\\D+(?<deviation>\\d+)\\)");
+            Pattern.compile("(?<name>\\S+) (\\*\\*[+-]\\d+\\*\\*, ?\\*\\*[+-]\\d+\\*\\* )?\\((?<trueskill>\\d+)\\D+(?<deviation>\\d+)\\)");
 
     private int id = 0;
 
