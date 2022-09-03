@@ -100,7 +100,7 @@ public class AchievementCommand implements Command {
                 .collect(Collectors.toList());
 
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder()
-                .setTitle(achievement.getName(), "https://urmw.live/achievements");
+                .setTitle(achievement.getName(), "https://urmw.markng.me/achievements");
 
         if (achievement.getDescription() == null) {
             embed.setDescription("*This achievement prefers to maintain an air of mystery...*");

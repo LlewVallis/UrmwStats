@@ -126,7 +126,7 @@ public class ExportCommand implements Command {
                 .complete();
 
         successMessage.editMessage(String.format(
-                baseSuccessMessage + "\nhttps://urmw.live/export/%s/%s/%s",
+                baseSuccessMessage + "\nhttps://urmw.markng.me/export/%s/%s/%s",
                 duration,
                 successMessage.getChannel().getId(),
                 successMessage.getAttachments().get(0).getId(),
