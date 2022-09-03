@@ -20,7 +20,7 @@ URMW Stats is a comprehensive system for tracking player, match, achievement and
 * **Public API**
 
   URMW Stats exposes a public API which is fit for 3rd party consumption.
-  The website has a [section detailing this](https://urmw.live/about).
+  The website has a [section detailing this](https://urmw.markng.me/about).
   
 * **YouTube video feed**
   
@@ -29,12 +29,12 @@ URMW Stats is a comprehensive system for tracking player, match, achievement and
 * **Ratings calculation**
 
   For players who are interested in how their ratings will change when winning or losing against another team, both the website and Discord bot provide a system for calculating the theoretical rating outcome of arbitrary matches.
-  The [web rating calculator](https://urmw.live/calculator) also summarizes the history of selected matchups in a pie graph.
+  The [web rating calculator](https://urmw.markng.me/calculator) also summarizes the history of selected matchups in a pie graph.
   
 * **Web leaderboard**
 
   The URMW ratings system provides a leaderboard in a Discord channel, but this is quite unweildy.
-  To address this, URMW Stats provides a more appealing [web leaderboard](https://urmw.live/players) which additionally links to player profiles.
+  To address this, URMW Stats provides a more appealing [web leaderboard](https://urmw.markng.me/players) which additionally links to player profiles.
   
 * **Player profiles**
 
@@ -42,7 +42,7 @@ URMW Stats is a comprehensive system for tracking player, match, achievement and
 
 * **Achievement and match listings**
 
-  The website also lists [every achievement with their completors](https://urmw.live/achievements) and a full list of [every match in the season](https://urmw.live/history).
+  The website also lists [every achievement with their completors](https://urmw.markng.me/achievements) and a full list of [every match in the season](https://urmw.markng.me/history).
   The match history can get quite large, so data is lazy loaded as you scroll.
 
 * **Discord OAuth and staff panel**
@@ -55,7 +55,7 @@ URMW Stats is a comprehensive system for tracking player, match, achievement and
 
   We regularly backup channels in our Discord server to minimize the amount of data loss in the event of serious incident.
   URMW Stats is able to save every message in a potentially very large channel and present it in a web UI on demand.
-  For example, here is an [export of a channel](https://urmw.live/export/768320373942910997/818777662017372180/export.json.gz) our rating system generates.
+  For example, here is an [export of a channel](https://urmw.markng.me/export/768320373942910997/818777662017372180/export.json.gz) our rating system generates.
 
 * **Command based queries**
 

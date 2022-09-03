@@ -73,7 +73,7 @@ public class StatsCommand implements Command {
         }
 
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder()
-                .setTitle("📈 Statistics for " + player.getName(), "https://urmw.live/player/" + player.getName());
+                .setTitle("📈 Statistics for " + player.getName(), "https://urmw.markng.me/player/" + player.getName());
 
         embed.addField("Skill", String.format(
                 "%.0f, %.0f",
@@ -129,7 +129,7 @@ public class StatsCommand implements Command {
 
     private void executeGlobalStats(MessageReceivedEvent event) {
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder()
-                .setTitle("📈 Season statistics", "https://urmw.live");
+                .setTitle("📈 Season statistics", "https://urmw.markng.me");
 
         appendTopPlayers(embed);
         appendTopTourneyWinners(embed);

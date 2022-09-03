@@ -117,9 +117,9 @@ public class AchievementsCommand implements Command {
         EmbedBuilder embed = CommandUtil.coloredEmbedBuilder();
 
         if (playerName == null) {
-            embed.setTitle("Achievements", "https://urmw.live/achievements");
+            embed.setTitle("Achievements", "https://urmw.markng.me/achievements");
         } else {
-            embed.setTitle("Achievements for " + playerName, "https://urmw.live/player/" + playerName);
+            embed.setTitle("Achievements for " + playerName, "https://urmw.markng.me/player/" + playerName);
         }
 
         if (listedAchievements.isEmpty()) {
